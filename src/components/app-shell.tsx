@@ -5,8 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, BookOpen, ChartNoAxesCombined, ChevronRight, FlaskConical, GraduationCap, LayoutDashboard, Menu, Moon, NotebookPen, PanelLeftClose, Play, Settings2, ShieldCheck, Sparkles, Sun, Target, Wrench, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLearning } from "@/components/learning-provider";
+import { updatePreferences } from "@/modules/storage/db";
 
-const navigation = [
+type NavigationItem = { href:string; label:string; icon:React.ElementType<{size?:number}>; pending?:boolean };
+const navigation: {group:string;items:NavigationItem[]}[] = [
   { group: "APRENDE", items: [
     { href: "/", label: "Vista general", icon: LayoutDashboard },
     { href: "/academia", label: "Academia", icon: GraduationCap },
@@ -30,12 +33,12 @@ function CandlesIcon({ size = 20, ...props }: React.ComponentProps<typeof Layout
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const rawPathname = usePathname();
+  const pathname = rawPathname.replace(/^\/forextrd(?=\/|$)/, "").replace(/\/+$/, "") || "/";
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [light, setLight] = useState(false);
-  useEffect(() => {
-    try { const enabled = localStorage.getItem("forex-theme") === "light"; setLight(enabled); document.documentElement.dataset.theme = enabled ? "light" : "dark"; } catch { /* The default theme also works without storage. */ }
-  }, []);
+  const {theme} = useLearning();
+  const light = theme === "light";
+  const [themeError,setThemeError] = useState("");
   useEffect(() => { setMobileOpen(false); }, [pathname]);
   useEffect(() => {
     if (!mobileOpen) return;
@@ -46,9 +49,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", escape); };
   }, [mobileOpen]);
   const title = pathname.startsWith("/academia/") ? "Tu primera lección" : navigation.flatMap(group => group.items).find(item => item.href === pathname)?.label ?? "Ajustes";
-  function toggleTheme() {
-    const next = !light; setLight(next); document.documentElement.dataset.theme = next ? "light" : "dark";
-    try { localStorage.setItem("forex-theme", next ? "light" : "dark"); } catch { /* Theme is still usable for this session. */ }
+  async function toggleTheme() {
+    setThemeError("");
+    try { await updatePreferences({theme:light ? "dark" : "light"}); }
+    catch { setThemeError("No se ha podido guardar el tema en este navegador."); }
   }
   return <div className="app-shell">
     <a href="#contenido" className="skip-link">Saltar al contenido</a>
@@ -64,12 +68,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="sidebar-bottom">
         <div className="learning-note"><ShieldCheck size={19}/><p>Aprende con criterio.<br/><span>Practica sin arriesgar capital.</span></p></div>
         <Link href="/ajustes" className={`nav-item ${pathname === "/ajustes" ? "active" : ""}`}><Settings2 size={18}/><span>Ajustes</span></Link>
-        <div className="local-profile"><span className="avatar"><GraduationCap size={19}/></span><div><strong>Perfil de aprendizaje</strong><span>Instalación local · Fase 1</span></div><PanelLeftClose size={16}/></div>
+        <div className="local-profile"><span className="avatar"><GraduationCap size={19}/></span><div><strong>Perfil de aprendizaje</strong><span>En este navegador · Fase 1</span></div><PanelLeftClose size={16}/></div>
       </div>
     </aside>
     <div className="main-shell">
       <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" onClick={() => setMobileOpen(true)} aria-label="Abrir menú" aria-expanded={mobileOpen}><Menu size={21}/></button><span className="breadcrumb-root">Mi espacio</span><ChevronRight size={14}/><span>{title}</span></div><div className="header-actions"><span className="local-tag"><span className="status-dot"/> Modo educativo</span><button className="icon-button" onClick={toggleTheme} aria-label={light ? "Activar modo oscuro" : "Activar modo claro"}>{light ? <Moon size={18}/> : <Sun size={18}/>}</button><Link href="/ajustes" className="header-plan"><Target size={16}/><span>Mi plan de estudio</span><ArrowUpRight size={14}/></Link></div></header>
-      <main id="contenido" className="page-content" tabIndex={-1}>{children}</main>
+      <main id="contenido" className="page-content" tabIndex={-1}>{themeError && <p className="form-error" role="alert">{themeError}</p>}{children}</main>
       <footer className="app-footer"><span>FOREX ACADEMY PRO <span className="footer-separator">/</span> APRENDER. COMPRENDER. VALIDAR.</span><span>Educación financiera · Sin operativa real</span></footer>
     </div>
   </div>;

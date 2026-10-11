@@ -1,0 +1,69 @@
+name: Publicar academia en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Instalar versiones del archivo de bloqueo
+        run: npm ci
+      - name: Comprobar TypeScript
+        run: npm run typecheck
+      - name: Ejecutar pruebas unitarias e integración local
+        run: npm test
+      - name: Generar exportación estática
+        run: npm run build
+      - name: Verificar el artefacto
+        run: |
+          node --input-type=module <<'NODE'
+          import { access, stat } from 'node:fs/promises';
+          if (!(await stat('out')).isDirectory()) throw new Error('Falta out/.');
+          for (const path of ['out/index.html', 'out/academia/index.html', 'out/academia/dinero-y-poder-adquisitivo/index.html', 'out/_next']) {
+            await access(path);
+          }
+          NODE
+      - name: Preparar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Subir únicamente el sitio compilado
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./out
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar el artefacto
+        id: deployment
+        uses: actions/deploy-pages@v4

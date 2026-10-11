@@ -1,0 +1,96 @@
+import type { CurriculumModule } from "./types";
+
+/** Catalog coverage is a roadmap, not a claim that every module is published. */
+export const curriculum: CurriculumModule[] = [
+  {
+    id: 0,
+    title: "Fundamentos financieros",
+    description: "Empieza por entender qué mide tu dinero. Primera unidad disponible; el resto del nivel está en preparación.",
+    topics: ["Dinero y poder adquisitivo", "Sistema financiero y mercados", "Oferta y demanda", "Bancos centrales y tipos de interés", "Liquidez y volatilidad", "Riesgo, inversión y especulación"],
+    status: "available",
+  },
+  {
+    id: 1,
+    title: "Introducción al Forex",
+    description: "Aprende a leer una cotización y a distinguir instrumentos, costes y exposición antes de simular una operación.",
+    topics: ["Divisa base y cotizada", "Pips, pipettes y lotes", "Bid, ask y spread", "Comisiones y financiación", "Margen y apalancamiento", "Órdenes, sesiones, spot, CFDs y futuros"],
+    status: "planned",
+  },
+  {
+    id: 2,
+    title: "Gráficos y análisis técnico básico",
+    description: "Describe lo que muestra un gráfico sin confundir una observación con una predicción.",
+    topics: ["Líneas, barras y velas", "Temporalidades", "Tendencias y rangos", "Soportes y resistencias", "Rupturas y retrocesos", "Volumen OTC y análisis multitemporal"],
+    status: "planned",
+  },
+  {
+    id: 3,
+    title: "Análisis técnico intermedio",
+    description: "Interpreta indicadores como transformaciones de datos y reconoce sus límites y señales falsas.",
+    topics: ["SMA y EMA", "RSI y MACD", "ATR, Bollinger y ADX", "Momentum y divergencias", "Fibonacci, canales y patrones", "Confluencias y sobreajuste"],
+    status: "planned",
+  },
+  {
+    id: 4,
+    title: "Price Action y estructura",
+    description: "Formula reglas observables para estudiar estructuras y contrasta marcos interpretativos con evidencia.",
+    topics: ["Máximos y mínimos", "Estructura interna y externa", "Oferta, demanda y liquidez", "BOS y cambios de estructura", "Order Blocks y Fair Value Gaps", "Evaluación crítica de Smart Money e ICT"],
+    status: "planned",
+  },
+  {
+    id: 5,
+    title: "Análisis fundamental",
+    description: "Relaciona publicaciones económicas, expectativas y política monetaria sin convertirlas en señales ciertas.",
+    topics: ["BCE, Fed, BoE y BoJ", "Inflación, PIB y empleo", "NFP y PMI", "Diferenciales de tipos y bonos", "Expectativas y sorpresas", "Calendario, correlaciones y riesgo de eventos"],
+    status: "planned",
+  },
+  {
+    id: 6,
+    title: "Gestión del riesgo",
+    description: "Prioridad formativa: calcula exposición, dimensiona pérdidas posibles y define cuándo dejar de operar.",
+    topics: ["Riesgo y tamaño de posición", "Valor del pip y stop-loss", "Resultados en R y expectancy", "Drawdown y riesgo de ruina", "Correlación, costes y slippage", "Apalancamiento, eventos extremos y límites"],
+    status: "planned",
+  },
+  {
+    id: 7,
+    title: "Psicología del trading",
+    description: "Evalúa decisiones por sus reglas y su contexto, separando la calidad del proceso del resultado aislado.",
+    topics: ["FOMO y miedo a perder", "Revenge trading y sobreoperación", "Sesgos y exceso de confianza", "Disciplina y expectativas", "Estrés, hábitos y paciencia", "Evaluación emocional y resultados aleatorios"],
+    status: "planned",
+  },
+  {
+    id: 8,
+    title: "Estrategias de trading",
+    description: "Convierte ideas en hipótesis evaluables con condiciones, reglas, invalidación y costes explícitos.",
+    topics: ["Seguimiento de tendencias", "Rupturas y rangos", "Reversión a la media y momentum", "Swing, intradía y scalping", "Eventos y volatilidad", "Reglas objetivas y evaluación sin datos futuros"],
+    status: "planned",
+  },
+  {
+    id: 9,
+    title: "Estadística y trading cuantitativo",
+    description: "Mide incertidumbre y robustez para evitar confundir azar, selección de muestras y ventaja estadística.",
+    topics: ["Probabilidad y valor esperado", "Varianza e intervalos de confianza", "Tamaño de muestra y Monte Carlo", "Sesgos y data snooping", "Fuera de muestra y walk-forward", "Sharpe, Sortino y sensibilidad a costes"],
+    status: "planned",
+  },
+  {
+    id: 10,
+    title: "Desarrollo de un sistema",
+    description: "Documenta un plan suficientemente preciso como para que otra persona pueda aplicarlo y evaluarlo.",
+    topics: ["Mercados, pares y horarios", "Entradas, salidas y filtros", "Gestión del capital", "Invalidación y riesgo máximo", "Checklist y procedimientos diarios", "Revisión y suspensión de estrategias"],
+    status: "planned",
+  },
+  {
+    id: 11,
+    title: "Backtesting y forward testing",
+    description: "Evalúa estrategias con datos trazables y supuestos reproducibles antes de interpretar sus resultados.",
+    topics: ["Fuentes, licencias y calidad de datos", "Sesgos y selección de muestras", "Spread, comisiones y slippage", "Registro y reproducción de operaciones", "Pruebas prospectivas en simulación", "Consistencia y criterios de descarte"],
+    status: "planned",
+  },
+  {
+    id: 12,
+    title: "Preparación profesional",
+    description: "Prepara rutinas, registros y criterios de seguridad. El contenido normativo requerirá verificación al publicarse.",
+    topics: ["Plan de negocio y costes", "Cuentas demo y fondeadas", "Reglas y límites de prop firms", "Regulación de Bélgica y la UE: FSMA y ESMA", "Introducción a la fiscalidad y registros", "Verificación de brokers y prevención de fraudes"],
+    status: "planned",
+  },
+];

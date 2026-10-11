@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = "http://127.0.0.1:3100";
+const baseURL = "http://127.0.0.1:3100/forextrd/";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -25,7 +25,7 @@ export default defineConfig({
     command: "node scripts/e2e-server.mjs",
     url: baseURL,
     reuseExistingServer: false,
-    timeout: 120_000,
+    timeout: 30_000,
     stdout: "pipe",
     stderr: "pipe",
   },

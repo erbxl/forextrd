@@ -1,40 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { completeLesson, saveAttempt } from "@/modules/progress/service";
 import Link from "next/link";
 import { ArrowRight, Check, CheckCircle2, CircleHelp, RotateCcw, ShieldCheck, TriangleAlert } from "lucide-react";
 import type { AssessmentResult, PublicQuestion } from "@/modules/academy/types";
 import { Button } from "@/components/ui/button";
 
 export function LessonAssessment({ slug, questions, passingScore, alreadyPassed, completed }: { slug: string; questions: PublicQuestion[]; passingScore: number; alreadyPassed: boolean; completed: boolean }) {
-  const router = useRouter();
   const [answers, setAnswers] = useState<Record<string,string>>({});
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);
   const [finished, setFinished] = useState(completed);
+  useEffect(() => { setFinished(completed); },[completed]);
   const canComplete = alreadyPassed || result?.passed;
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setBusy(true);
     const payload = Object.fromEntries(questions.map(question => [question.id, question.type === "number" ? Number((answers[question.id] ?? "").trim().replace(",", ".")) : answers[question.id]]));
     try {
-      const response = await fetch(`/api/lessons/${slug}/attempts`, { method: "POST", headers: { "Content-Type":"application/json" }, body: JSON.stringify({answers:payload}) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "No se ha podido guardar la evaluación.");
-      setResult(data); router.refresh();
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "No se pudo conectar. Vuelve a intentarlo."); }
+      const data = await saveAttempt(slug,payload);
+      setResult(data);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "No se pudo guardar en este navegador. Vuelve a intentarlo."); }
     finally { setBusy(false); }
   }
   async function complete() {
     setBusy(true); setError("");
     try {
-      const response = await fetch(`/api/lessons/${slug}/complete`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({read:acknowledged}) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "No se ha podido completar la lección.");
-      setFinished(true); router.refresh();
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "No se pudo conectar. Vuelve a intentarlo."); }
+      await completeLesson(slug,acknowledged);
+      setFinished(true);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "No se pudo guardar en este navegador. Vuelve a intentarlo."); }
     finally { setBusy(false); }
   }
   return <section id="evaluacion" className="assessment-section"><div className="lesson-section-title"><span className="section-count">PRÁCTICA</span><h2>Demuestra lo que has aprendido</h2></div><p className="muted">Responde las 5 preguntas. Necesitas al menos un {passingScore}% y resolver correctamente el cálculo de poder adquisitivo. Puedes repetir sin límite de intentos de aprendizaje.</p>

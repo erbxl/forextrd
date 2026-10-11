@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Clock3 } from "lucide-react";
+import { recordStudy } from "@/modules/progress/service";
 
 export function StudyTracker() {
   const [status, setStatus] = useState("El tiempo se registra mientras lees en esta pestaña.");
@@ -15,9 +16,7 @@ export function StudyTracker() {
       sending = true;
       const currentGeneration = generation;
       try {
-        const response = await fetch("/api/study", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sessionId ? {sessionId} : {}) });
-        if (!response.ok) throw new Error("No se pudo registrar el tiempo");
-        const data: {sessionId: string} = await response.json();
+        const data = await recordStudy(sessionId);
         if (active && currentGeneration === generation) { sessionId = data.sessionId; setStatus("Tiempo de lectura activo · guardado cada 30 segundos"); }
       } catch { if (active) setStatus("No se ha podido guardar el tiempo de lectura. Tus evaluaciones se guardan por separado."); }
       finally { sending = false; }

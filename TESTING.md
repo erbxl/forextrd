@@ -1,14 +1,12 @@
-# Verificación y pruebas
+# Pruebas de la versión estática
 
-## Estado de la entrega
+## Estado
 
-Las verificaciones están **pendientes de ejecución y confirmación** durante la implementación de esta entrega. Este documento describe el procedimiento y los criterios; no constituye por sí mismo evidencia de que las comprobaciones hayan pasado.
+Las verificaciones de la migración están **pendientes de ejecución y confirmación**. Los resultados de la versión anterior con servidor no acreditan esta arquitectura. La publicación remota en GitHub Pages tampoco está confirmada por la mera existencia del workflow.
 
-## Preparación
+## Procedimiento
 
-Instala dependencias y configura la base según [README.md](README.md). Vitest crea su base de integración en una carpeta temporal. Playwright crea una base nueva bajo `.playwright/run-*`, aplica migraciones y semilla y utiliza un servidor de producción en `http://127.0.0.1:3100`. Ninguna de estas pruebas escribe en `prisma/dev.db`.
-
-Comandos de validación:
+Desde la raíz, con dependencias instaladas mediante `npm ci`:
 
 ```powershell
 npm run typecheck
@@ -18,54 +16,45 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-La instalación de Chromium es necesaria únicamente si Playwright no tiene disponible el navegador. Requiere acceso a sus binarios. Un fallo de descarga impide ejecutar las pruebas de navegador y debe registrarse como una limitación, no como una prueba aprobada.
+Instala Chromium solo si no está disponible la revisión requerida. E2E necesita el build más reciente y el puerto 3100 libre; inicia su propio servidor que sirve exclusivamente `out/` bajo `/forextrd/`. No ejecuta Next.js ni un backend de pruebas.
 
-`test:e2e` requiere haber ejecutado `npm run build` después del último cambio. No reutiliza un servidor que ya esté escuchando en el puerto 3100. La configuración ejecuta cuatro pruebas seriales en Chromium: instalación vacía y protección de rutas; intento fallido y finalización; ajustes; navegación móvil y temas. La prueba móvil utiliza un viewport de 390 × 844, no un dispositivo físico.
+Cada prueba abre un contexto de navegador nuevo y aislado, con su propio IndexedDB. No se utiliza el perfil habitual ni se comparte progreso entre pruebas. Los tests de servicios emplean `fake-indexeddb`, que no sustituye las comprobaciones de navegador real.
 
-Para un entorno con un Chromium ya instalado puede configurarse `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` con la ruta absoluta de su ejecutable. El comportamiento predeterminado utiliza la revisión administrada por Playwright; cualquier sustitución del navegador debe registrarse con los resultados.
+Para usar un Chromium existente puede configurarse `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` con la ruta absoluta del ejecutable. El navegador por defecto es la revisión administrada por Playwright. Si se utiliza otra, registra esa diferencia con el resultado.
 
-El flujo guarda capturas en `artifacts/dashboard.png` y `artifacts/mobile.png`. Playwright conserva trazas y capturas de fallos en `test-results/` y un informe en `playwright-report/`. Las bases de cada ejecución permanecen en `.playwright/` para diagnóstico. Todos estos directorios están ignorados por Git; los archivos no deben considerarse resultados aprobados si el comando falló.
+## Cobertura requerida
 
-## Alcance
-
-| Capa | Qué debe comprobar |
+| Área | Comprobación |
 | --- | --- |
-| TypeScript | Coherencia de contratos y tipos. |
-| Vitest | Reglas deterministas de corrección, puntuación, cálculo y progreso. |
-| Persistencia | Intentos y finalización guardados; repetición de la semilla sin reiniciar progreso. |
-| Playwright | Lectura, evaluación, corrección y progreso desde el navegador. |
-| Compilación | Generación de Prisma y build de producción. |
-| Revisión manual | Navegación por teclado, móvil, temas, estados vacíos, errores y reinicio. |
+| Evaluación | 80 % mínimo, cálculo obligatorio, tolerancia numérica y cargas inválidas. |
+| Persistencia | Inicialización idempotente, intentos, finalización, preferencias, actividad y migraciones. |
+| Copias JSON | Estructura y versión, previsualización, confirmación, restauración atómica y rechazo de archivos incompatibles. |
+| Exportación | HTML de cada ruta, recursos bajo el prefijo, ausencia de dependencias de backend en el artefacto. |
+| Compatibilidad Windows | Nombres planos de segmentos Next, conservación de originales, idempotencia, colisiones y lista de archivos admitidos. |
+| Navegador | Dashboard inicial, evaluación, recarga, progreso, ajustes, temas y backups. |
+| Hosting estático | Rutas profundas y navegación bajo `/forextrd/`, 404 reales y recursos cargados. |
 
-## Casos esenciales de la primera unidad
+La evaluación inicial debe rechazar el 80 % obtenido al fallar la pregunta numérica. Tras aprobar, la confirmación de lectura habilita la finalización. La recarga debe recuperar el estado desde IndexedDB, y el porcentaje publicado no debe presentarse como currículo completo.
 
-- Confirmar que un perfil nuevo no presenta lecciones aprobadas ni actividad inventada.
-- Abrir «Dinero y poder adquisitivo» desde academia o dashboard.
-- Impedir completar la unidad solo por visitarla o por acumular tiempo de lectura.
-- Mostrar corrección y explicación para cada respuesta enviada.
-- Guardar un intento suspenso y reflejar los conceptos que requieren repaso.
-- Exigir un 80 % como mínimo y la respuesta numérica correcta para aprobar, y la confirmación de lectura para completar la lección. Acertar cuatro respuestas con el cálculo equivocado no debe aprobar la evaluación.
-- Aprobar con respuestas suficientes y comprobar que la finalización se conserva al recargar.
-- Repetir la evaluación sin duplicar la lección completada.
-- Identificar que completar lo publicado no equivale a completar el currículo.
-- Guardar el nombre y el objetivo semanal y comprobarlos tras volver a abrir ajustes.
+Los E2E verifican exportación de JSON, restablecimiento confirmado e importación con previsualización antes de confirmar. Un JSON inválido no debe modificar ajustes ni progreso. La prueba móvil usa un viewport, no un dispositivo físico.
 
-Las respuestas correctas y la nota se deciden en el servidor. La validación debe rechazar cargas mal formadas, lecciones inexistentes y valores fuera de las restricciones admitidas.
+## Artefactos
 
-## Comprobación manual de persistencia
+Las capturas de revisión se guardan en `artifacts/dashboard.png` y `artifacts/mobile.png`. Los fallos conservan traza y captura en `test-results/`; el informe HTML está en `playwright-report/`. Estos directorios están ignorados por Git. Su existencia no significa que las pruebas hayan pasado.
 
-1. Inicia la aplicación local y responde a la evaluación.
-2. Anota el resultado y el estado del dashboard.
-3. Detén el servidor con `Ctrl+C` y vuelve a ejecutarlo sin borrar la base.
-4. Comprueba que resultados, perfil y progreso permanecen.
-5. Detén el servidor, ejecuta `npm run db:setup` y arranca de nuevo. La semilla debe conservar los resultados existentes.
+## Verificación remota
 
-## Revisión de interfaz
+Después de una ejecución satisfactoria de Actions:
 
-Comprueba al menos una anchura de escritorio y una móvil, los dos temas, el acceso por teclado, foco visible y etiquetas de campos. Los módulos futuros deben indicar su estado pendiente, sin formularios que simulen resultados ni gráficos con precios presentados como reales.
+1. Abre la URL publicada por el trabajo `deploy`.
+2. Comprueba dashboard, fuentes, iconos y estilos.
+3. Abre directamente `/forextrd/academia/dinero-y-poder-adquisitivo/` y recarga.
+4. Completa una evaluación, cambia ajustes y recarga para comprobar IndexedDB.
+5. Exporta una copia y prueba su restauración en un perfil de navegador de pruebas.
+6. Comprueba consola y red: no deben existir llamadas a localhost, APIs retiradas ni recursos 404.
 
-La revisión visual no sustituye una auditoría de accesibilidad y los tests de esta fase no validan simulación, backtesting, datos de mercado ni multiusuario, porque esas funcionalidades aún no están implementadas.
+Registra la URL real, revisión, fecha, navegador, comandos y resultados. Si faltan permisos para activar Pages, indica el paso de configuración pendiente; no declares el despliegue verificado.
 
-## Registro de resultados
+## Límites de las pruebas
 
-Al verificar una versión, registra el comando, resultado, fecha y entorno; incluye las limitaciones o comprobaciones omitidas. No transformes un bloqueo de herramientas o de red en un resultado satisfactorio. Los resultados del build no sustituyen a ejecutar los flujos de navegador.
+`fake-indexeddb` no reproduce todas las cuotas, restricciones del modo privado ni diferencias entre navegadores. La revisión móvil no es una auditoría completa de accesibilidad. Simulador, datos de mercado, backtesting, autenticación y sincronización no se validan porque siguen pendientes.

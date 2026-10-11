@@ -1,12 +1,23 @@
 import { expect, test, type Page } from "@playwright/test";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { firstLesson } from "../../src/modules/academy/content";
-import type { ProgressSnapshot } from "../../src/modules/progress/types";
 
-const lessonPath = `/academia/${firstLesson.slug}`;
-const completePath = `/api/lessons/${firstLesson.slug}/complete`;
-const origin = "http://127.0.0.1:3100";
+const lessonPath = `academia/${firstLesson.slug}/`;
+let runtimeProblems: string[] = [];
+
+test.beforeEach(async ({ page }) => {
+  runtimeProblems = [];
+  page.on("pageerror", error => runtimeProblems.push(error.message));
+  page.on("console", message => { if (message.type() === "error") runtimeProblems.push(message.text()); });
+  page.on("request", request => {
+    if (/\/api\//.test(new URL(request.url()).pathname)) runtimeProblems.push(`API retirada: ${request.url()}`);
+  });
+  page.on("response", response => {
+    if (response.status() >= 400) runtimeProblems.push(`Recurso ${response.status()}: ${response.url()}`);
+  });
+});
+test.afterEach(() => { expect(runtimeProblems, "Sin errores de consola, APIs ni recursos fallidos").toEqual([]); });
 
 async function answerAssessment(page: Page, correctNumerical: boolean) {
   for (const [index, question] of firstLesson.questions.entries()) {
@@ -22,105 +33,168 @@ async function answerAssessment(page: Page, correctNumerical: boolean) {
   await page.getByRole("button", { name: "Corregir y guardar respuestas" }).click();
 }
 
-test.describe.serial("academia local sobre SQLite aislado", () => {
-  test("comienza sin actividad y protege la finalización y el origen", async ({ page, request }) => {
-    await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Cada paso cuenta." })).toBeVisible();
-    await expect(page.getByText("0/1 lección publicada", { exact: true })).toBeVisible();
-    await expect(page.getByText("0 evaluaciones realizadas", { exact: true })).toBeVisible();
+async function completeFirstLesson(page: Page) {
+  await page.goto(lessonPath);
+  await expect(page.getByRole("heading", { name: firstLesson.title, exact: true })).toBeVisible();
+  await answerAssessment(page, true);
+  await expect(page.getByRole("heading", { name: "Evaluación superada" })).toBeVisible();
+  await page.getByRole("checkbox", { name: "He estudiado la explicación y revisado mis respuestas." }).check();
+  await page.getByRole("button", { name: "Completar lección" }).click();
+  await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
+}
 
-    const freshResponse = await request.get("/api/progress");
-    expect(freshResponse.status()).toBe(200);
-    const fresh: ProgressSnapshot = await freshResponse.json();
-    expect(fresh.stats).toMatchObject({ completedLessons: 0, totalAttempts: 0, studySeconds: 0, accuracy: null });
+async function saveSettings(page: Page, name = "Ana de prueba", goal = "5") {
+  await page.goto("ajustes/");
+  await page.getByRole("textbox", { name: /¿Cómo te llamas\?/ }).fill(name);
+  await page.getByRole("radio", { name: goal, exact: true }).check();
+  await page.getByRole("button", { name: "Guardar mi plan" }).click();
+  await expect(page.getByText("Tu plan de estudio se ha guardado.", { exact: true })).toBeVisible();
+}
 
-    const early = await request.post(completePath, { headers: { Origin: origin }, data: { read: true } });
-    expect(early.status()).toBe(409);
-    const forged = await request.patch("/api/settings", {
-      headers: { Origin: "https://another-origin.example" },
-      data: { name: "Cambio rechazado", weeklyGoal: 7 },
-    });
-    expect(forged.status()).toBe(403);
-    const unchanged: ProgressSnapshot = await (await request.get("/api/progress")).json();
-    expect(unchanged.user.name).toBe("Estudiante");
-    expect(unchanged.stats.completedLessons).toBe(0);
+test("carga el export estático y navega por rutas reales bajo /forextrd/", async ({ page, request }) => {
+  await page.goto("./");
+  await expect(page.getByRole("heading", { name: "Cada paso cuenta." })).toBeVisible();
+  await expect(page.getByText("0/1 lección publicada", { exact: true })).toBeVisible();
+  await expect(page.getByText("0 evaluaciones realizadas", { exact: true })).toBeVisible();
+  expect(await page.evaluate(async () => (await indexedDB.databases()).some(database => database.name === "forex-academy-pro"))).toBe(true);
+  await mkdir(join(process.cwd(), "artifacts"), { recursive: true });
+  await page.screenshot({ path: "artifacts/dashboard.png", fullPage: true, animations: "disabled" });
 
-    await mkdir(join(process.cwd(), "artifacts"), { recursive: true });
-    await page.screenshot({ path: "artifacts/dashboard.png", fullPage: true, animations: "disabled" });
-  });
+  await page.getByRole("link", { name: "Academia", exact: true }).click();
+  await expect(page).toHaveURL(/\/forextrd\/academia\/$/);
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await page.goto(lessonPath);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: firstLesson.title, exact: true })).toBeVisible();
 
-  test("guarda un intento fallido, exige el cálculo y conserva la lección completada", async ({ page, request }) => {
-    await page.goto(lessonPath);
-    await expect(page.getByRole("heading", { name: firstLesson.title, exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
+  const redirect = await request.get("academia", { maxRedirects: 0 });
+  expect(redirect.status()).toBe(308);
+  expect(redirect.headers().location).toBe("/forextrd/academia/");
+  expect((await request.get("ruta-inexistente/")).status()).toBe(404);
+  expect((await request.get("%2e%2e/package.json")).status()).toBe(404);
+});
 
-    await answerAssessment(page, false);
-    await expect(page.getByRole("heading", { name: "Cada intento también enseña" })).toBeVisible();
-    await expect(page.getByText("Revisa este concepto", { exact: true })).toBeVisible();
-    const failed: ProgressSnapshot = await (await request.get("/api/progress")).json();
-    expect(failed.stats).toMatchObject({ totalAttempts: 1, answeredQuestions: 5, correctAnswers: 4, completedLessons: 0 });
-    expect(failed.lessons[0]).toMatchObject({ passed: false, bestScore: 80 });
-    expect(failed.weaknesses).toContainEqual({ concept: "Cálculo del poder adquisitivo", incorrectCount: 1 });
+test("corrige, exige el cálculo y conserva intentos y finalización en IndexedDB", async ({ page }) => {
+  await page.goto(lessonPath);
+  await expect(page.getByRole("heading", { name: firstLesson.title, exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
+  await answerAssessment(page, false);
+  await expect(page.getByRole("heading", { name: "Cada intento también enseña" })).toBeVisible();
+  await expect(page.getByText("Revisa este concepto", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
 
-    await page.reload();
-    await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
-    await answerAssessment(page, true);
-    await expect(page.getByRole("heading", { name: "Evaluación superada" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
-    await page.getByRole("checkbox", { name: "He estudiado la explicación y revisado mis respuestas." }).check();
-    await page.getByRole("button", { name: "Completar lección" }).click();
-    await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
-    await page.reload();
-    await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
+  await page.goto("progreso/");
+  await expect(page.getByText("4 de 5 respuestas correctas.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Cálculo del poder adquisitivo/ })).toBeVisible();
+  await page.goto(lessonPath);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
+  await answerAssessment(page, true);
+  await expect(page.getByRole("heading", { name: "Evaluación superada" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Completar lección" })).toBeDisabled();
+  await page.getByRole("checkbox", { name: "He estudiado la explicación y revisado mis respuestas." }).check();
+  await page.getByRole("button", { name: "Completar lección" }).click();
+  await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
 
-    const completed: ProgressSnapshot = await (await request.get("/api/progress")).json();
-    expect(completed.stats).toMatchObject({ completedLessons: 1, totalAttempts: 2, answeredQuestions: 10, correctAnswers: 9 });
-    expect(completed.lessons[0].completedAt).toBeTruthy();
-    await page.getByRole("link", { name: "Ver mi progreso", exact: true }).click();
-    await expect(page).toHaveURL(/\/progreso$/);
-    await expect(page.getByRole("heading", { name: "Lo que sabes. Lo que sigue." })).toBeVisible();
-    await expect(page.getByText("DEMOSTRADA", { exact: true })).toBeVisible();
-    await expect(page.getByText("9 de 10 respuestas correctas.", { exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Cálculo del poder adquisitivo/ })).toBeVisible();
-    await page.goto("/");
-    await expect(page.getByText("1/1 lección publicada", { exact: true })).toBeVisible();
-    await expect(page.getByText("Primera lección superada", { exact: true })).toBeVisible();
-  });
+  await page.getByRole("link", { name: "Ver mi progreso", exact: true }).click();
+  await expect(page).toHaveURL(/\/forextrd\/progreso\/$/);
+  await expect(page.getByText("DEMOSTRADA", { exact: true })).toBeVisible();
+  await expect(page.getByText("9 de 10 respuestas correctas.", { exact: true })).toBeVisible();
+  await page.goto("./");
+  await expect(page.getByText("1/1 lección publicada", { exact: true })).toBeVisible();
+  await expect(page.getByText("Primera lección superada", { exact: true })).toBeVisible();
+});
 
-  test("conserva nombre y objetivo semanal desde los ajustes", async ({ page, request }) => {
-    await page.goto("/ajustes");
-    await page.getByRole("textbox", { name: /¿Cómo te llamas\?/ }).fill("Ana de prueba");
-    await page.getByRole("radio", { name: "5", exact: true }).check();
-    const savedResponse = page.waitForResponse(response => response.url().endsWith("/api/settings") && response.request().method() === "PATCH");
-    await page.getByRole("button", { name: "Guardar mi plan" }).click();
-    expect((await savedResponse).status()).toBe(200);
-    await expect(page.getByRole("status")).toHaveText("Tu plan de estudio se ha guardado.");
-    await page.reload();
-    await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Ana de prueba");
-    await expect(page.getByRole("radio", { name: "5", exact: true })).toBeChecked();
-    const saved: ProgressSnapshot = await (await request.get("/api/progress")).json();
-    expect(saved.user).toEqual({ name: "Ana de prueba", weeklyGoal: 5 });
-    await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Hola, Ana de prueba." })).toBeVisible();
-  });
+test("guarda ajustes y tema y conserva navegación móvil", async ({ page }) => {
+  await saveSettings(page);
+  await page.getByRole("button", { name: "Activar modo claro" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.reload();
+  await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Ana de prueba");
+  await expect(page.getByRole("radio", { name: "5", exact: true })).toBeChecked();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 
-  test("permite navegar en móvil y conserva la selección del tema", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/");
-    const openMenu = page.getByRole("button", { name: "Abrir menú" });
-    await openMenu.click();
-    await expect(openMenu).toHaveAttribute("aria-expanded", "true");
-    await page.getByRole("link", { name: "Academia", exact: true }).click();
-    await expect(page).toHaveURL(/\/academia$/);
-    await expect(openMenu).toHaveAttribute("aria-expanded", "false");
-    await page.getByRole("button", { name: "Activar modo claro" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-    await page.reload();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-    await page.getByRole("button", { name: "Activar modo oscuro" }).click();
-    await page.goto("/");
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-    await mkdir(join(process.cwd(), "artifacts"), { recursive: true });
-    await page.screenshot({ path: "artifacts/mobile.png", fullPage: true, animations: "disabled" });
-  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./");
+  await expect(page.getByRole("heading", { name: "Hola, Ana de prueba." })).toBeVisible();
+  const openMenu = page.getByRole("button", { name: "Abrir menú" });
+  await openMenu.click();
+  await expect(openMenu).toHaveAttribute("aria-expanded", "true");
+  await page.getByRole("link", { name: "Academia", exact: true }).click();
+  await expect(page).toHaveURL(/\/forextrd\/academia\/$/);
+  await expect(openMenu).toHaveAttribute("aria-expanded", "false");
+  await page.getByRole("button", { name: "Activar modo oscuro" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.goto("./");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.getByRole("heading", { name: "Hola, Ana de prueba." })).toBeVisible();
+  await mkdir(join(process.cwd(), "artifacts"), { recursive: true });
+  await page.screenshot({ path: "artifacts/mobile.png", fullPage: true, animations: "disabled" });
+});
+
+test("exporta, restablece y restaura una copia solo después de previsualizar y confirmar", async ({ page }, testInfo) => {
+  await completeFirstLesson(page);
+  await saveSettings(page, "Perfil de copia", "4");
+  await page.getByRole("button", { name: "Activar modo claro" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+
+  const downloadEvent = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Exportar copia JSON" }).click();
+  const download = await downloadEvent;
+  const backupPath = testInfo.outputPath("academy-backup.json");
+  await download.saveAs(backupPath);
+  const backup = JSON.parse(await readFile(backupPath, "utf8"));
+  expect(backup).toMatchObject({ format: "forex-academy-pro", version: 1 });
+  expect(backup.tables.profile[0].name).toBe("Perfil de copia");
+  expect(backup.tables.attempts).toHaveLength(1);
+
+  await page.getByRole("button", { name: "Restablecer datos", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Confirmar restablecimiento" })).toBeDisabled();
+  await page.getByRole("checkbox", { name: "Confirmo que quiero borrar todos mis datos locales." }).check();
+  await page.getByRole("button", { name: "Confirmar restablecimiento" }).click();
+  await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Estudiante");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.goto("./");
+  await expect(page.getByText("0/1 lección publicada", { exact: true })).toBeVisible();
+  await expect(page.getByText("0 evaluaciones realizadas", { exact: true })).toBeVisible();
+
+  await page.goto("ajustes/");
+  await page.getByLabel("Seleccionar copia JSON", { exact: true }).setInputFiles(backupPath);
+  await expect(page.getByRole("heading", { name: "Previsualización de la copia" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Restaurar copia" })).toBeDisabled();
+  await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Estudiante");
+  await page.getByRole("checkbox", { name: "Confirmo que quiero sustituir mis datos por esta copia." }).check();
+  await page.getByRole("button", { name: "Restaurar copia" }).click();
+  await expect(page.getByText("Copia restaurada. Tu progreso y tus preferencias ya están disponibles.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Perfil de copia");
+  await expect(page.getByRole("radio", { name: "4", exact: true })).toBeChecked();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.reload();
+  await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Perfil de copia");
+  await page.goto("./");
+  await expect(page.getByText("1/1 lección publicada", { exact: true })).toBeVisible();
+  await page.goto(lessonPath);
+  await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
+});
+
+test("rechaza JSON corrupto y versiones incompatibles sin cambiar los datos", async ({ page }) => {
+  await saveSettings(page, "Conservar este perfil", "6");
+  const upload = page.getByLabel("Seleccionar copia JSON", { exact: true });
+  for (const [name, text] of [
+    ["corrupto.json", "{ este archivo no es JSON"],
+    ["version-futura.json", JSON.stringify({ format: "forex-academy-pro", version: 999, tables: {} })],
+  ]) {
+    await upload.setInputFiles({ name, mimeType: "application/json", buffer: Buffer.from(text) });
+    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Previsualización de la copia" })).toHaveCount(0);
+    await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Conservar este perfil");
+    await expect(page.getByRole("radio", { name: "6", exact: true })).toBeChecked();
+  }
+  await page.reload();
+  await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Conservar este perfil");
+  await expect(page.getByRole("radio", { name: "6", exact: true })).toBeChecked();
 });

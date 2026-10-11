@@ -11,9 +11,10 @@ const roadmap: Record<string,{title:string;phase:number;description:string;featu
   replay:{title:"Trading Replay",phase:5,description:"Aprender a decidir sin conocer la siguiente vela.",features:["Avance y pausa de datos históricos importados","Indicadores calculados únicamente con datos disponibles","Sesiones de práctica y decisiones guardadas"]},
   backtesting:{title:"Laboratorio de backtesting",phase:5,description:"Convertir hipótesis en pruebas reproducibles.",features:["Estrategias sencillas y reglas objetivas","Costes, operaciones y estadísticas trazables","Separación de muestra y validación fuera de muestra"]},
   diario:{title:"Diario de trading",phase:6,description:"Evaluar tus decisiones con contexto, además de resultados.",features:["Registro de operaciones, emociones y cumplimiento del plan","Análisis de errores recurrentes y disciplina","Resultados netos expresados en dinero y R"]},
-  mentor:{title:"Forex Mentor",phase:6,description:"Una futura ayuda educativa que partirá del temario.",features:["Explicaciones y repasos basados en contenido verificable","Ayudas predefinidas disponibles sin una API de pago","Proveedores opcionales con claves únicamente en el servidor"]},
+  mentor:{title:"Forex Mentor",phase:6,description:"Una futura ayuda educativa que partirá del temario.",features:["Explicaciones y repasos basados en contenido verificable","Ayudas predefinidas disponibles sin una API de pago","Sin claves privadas en el navegador; integración externa opcional por definir"]},
 };
 export function generateStaticParams() { return Object.keys(roadmap).map(section => ({section})); }
+export const dynamicParams = false;
 export async function generateMetadata({params}:{params:Promise<{section:string}>}) { const {section} = await params; return {title:roadmap[section]?.title ?? "Página no encontrada"}; }
 export default async function PlannedPage({params}:{params:Promise<{section:string}>}) {
   const {section} = await params; const item=roadmap[section]; if(!item) notFound();

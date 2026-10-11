@@ -38,7 +38,7 @@ Su ejemplo resuelto conserva 1.000 € nominales cuando una cesta se encarece un
 
 Las cinco preguntas pesan lo mismo (20 puntos cada una). La lección se supera con al menos un 80 % **y** el cálculo numérico correcto. Un 80 % con el cálculo incorrecto no completa la lección. La tolerancia numérica es inclusiva: ±0,01 € respecto a 952,38 €; se admite el resultado sin redondear. La interfaz convierte la entrada del usuario en un número; el motor de evaluación exige un número finito y no convierte cadenas silenciosamente.
 
-Cada respuesta recibe una explicación y la solución tras el envío. Las preguntas desconocidas, ausentes, valores no finitos y opciones no reconocidas se rechazan. La corrección se realiza en el servidor. La persistencia de intentos permite repetir sin borrar el historial y conservar el logro ya alcanzado. Las horas orientativas y el tiempo de uso no conceden competencias por sí solos.
+Cada respuesta recibe una explicación y la solución tras el envío. Las preguntas desconocidas, ausentes, valores no finitos y opciones no reconocidas se rechazan. La corrección se realiza en el navegador. Las soluciones se distribuyen como contenido estático y pueden inspeccionarse: la evaluación está orientada al autoaprendizaje. La persistencia local de intentos en IndexedDB permite repetir sin borrar el historial y conservar el logro ya alcanzado. Las horas orientativas y el tiempo de uso no conceden competencias por sí solos.
 
 No se implementan todavía variantes aleatorias, adaptación de dificultad, ejercicios de arrastre, identificación de patrones ni exámenes por nivel. Deben añadirse con contenido verificable y corrección probada.
 

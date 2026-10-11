@@ -1,82 +1,76 @@
-# Desarrollo local
+# Desarrollo y publicación
 
-## Entorno
+## Inicio
 
-Node.js >= 20.17 y npm >= 10. El stack de esta entrega es Next.js 16 con App Router, React 19, TypeScript estricto, Tailwind CSS, Prisma 6.19.3, SQLite y Zod. Los comandos se ejecutan desde la raíz del repositorio. Las versiones concretas están en `package.json`; conserva el archivo de bloqueo al actualizar dependencias.
-
-Configuración inicial en PowerShell:
+Se recomienda Node.js 22, utilizado en CI; el mínimo del proyecto es 20.17 con npm 10. Conserva `package-lock.json` y ejecuta desde la raíz:
 
 ```powershell
-Copy-Item .env.example .env
-npm install
-npm run db:setup
+npm ci
 npm run dev
 ```
 
-Si `.env` ya existe, comprueba su configuración antes de modificarlo. La URL predeterminada es `DATABASE_URL="file:./dev.db"`, relativa al directorio del esquema Prisma; los datos se almacenan en `prisma/dev.db`. La aplicación está disponible en `http://127.0.0.1:3000`.
-
-No se necesitan API keys. Añadir un proveedor externo será una tarea de una fase posterior; sus credenciales deberán quedarse en el servidor y fuera del repositorio.
+Dirección de desarrollo: `http://127.0.0.1:3000/forextrd/`. No hay configuración habitual de `.env`, credenciales ni base del servidor. IndexedDB se inicializa al visitar la aplicación.
 
 ## Comandos
 
 | Comando | Finalidad |
 | --- | --- |
-| `npm run dev` | Servidor de desarrollo en loopback. |
-| `npm run build` | Generar cliente Prisma y compilar para producción local. |
-| `npm start` | Ejecutar la compilación local en loopback. |
-| `npm run db:generate` | Regenerar el cliente del esquema Prisma. |
-| `npm run db:migrate` | Aplicar las migraciones versionadas existentes. |
-| `npm run db:seed` | Sincronizar el catálogo inicial sin reiniciar el progreso. |
-| `npm run db:setup` | Generar cliente, aplicar migraciones y ejecutar la semilla. |
-| `npm run typecheck` | Comprobar tipos sin emitir JavaScript. |
-| `npm test` | Ejecutar las pruebas de Vitest. |
-| `npm run test:watch` | Ejecutar Vitest durante el desarrollo. |
-| `npm run test:e2e` | Ejecutar Playwright contra el build de producción, con SQLite aislado en el puerto 3100. |
+| `npm run dev` | Desarrollo Next.js local bajo `/forextrd/`. |
+| `npm run typecheck` | Comprobar TypeScript. |
+| `npm test` | Evaluación, almacenamiento local y backups mediante Vitest. |
+| `npm run test:watch` | Vitest durante desarrollo. |
+| `npm run build` | Exportar a `out/` y verificar el artefacto. |
+| `npm run preview` / `npm start` | Servir archivos de `out/` en `127.0.0.1:3100/forextrd/`. |
+| `npm run test:e2e` | Navegador sobre el último build estático. |
 
-`db:migrate` no crea una migración nueva ni reinicia la base. Si cambias el esquema, prepara una migración de desarrollo, revisa su SQL y pruébala con una base desechable antes de aplicarla a datos de estudio. No utilices `prisma migrate reset` para actualizar una instalación con progreso.
+`preview` no ejecuta Next.js, no corrige ejercicios y no tiene APIs. Solo sirve archivos, devuelve 404 para rutas inexistentes y redirige directorios a su variante con barra final. No contiene una redirección general a la portada. Para otro puerto en PowerShell:
 
-Antes de `test:e2e`, ejecuta `npm run build`. Playwright crea una carpeta nueva `.playwright/run-*`, aplica las migraciones y la semilla y arranca el servidor de producción en `127.0.0.1:3100`. No reutiliza servidores existentes ni escribe en `prisma/dev.db`. Las carpetas de ejecución se conservan para poder inspeccionar la base tras un fallo; `.playwright/`, `artifacts/`, `test-results/` y `playwright-report/` están excluidas del control de versiones.
+```powershell
+$env:PREVIEW_PORT = "3101"
+npm run preview
+```
 
-## Persistencia y copias de seguridad
+El puerto de E2E permanece en 3100. Cada puerto constituye un origen diferente a efectos de almacenamiento. Tras una modificación, vuelve a compilar antes de comprobar `preview`; el servidor no recompila archivos.
 
-El perfil local, los resultados y el progreso se guardan en SQLite. El contenido educativo vive en archivos versionados y la semilla sincroniza su catálogo. Actualizar ese catálogo no debe reemplazar los resultados del usuario. Conserva identificadores estables para que los intentos sigan asociados a su lección.
+### Compatibilidad de exportación en Windows
 
-La actividad diaria utiliza la zona horaria `Europe/Madrid`. El objetivo semanal corresponde a días de estudio, de 1 a 7, dentro de la semana de lunes a domingo; se reinicia el lunes. El gráfico de actividad muestra los últimos siete días. La precisión de respuestas agrega los intentos guardados; el repaso recoge conceptos con errores históricos, incluidos los corregidos en un intento posterior, y no constituye un diagnóstico de dominio definitivo.
+La versión instalada de Next.js 16.4 recoge rutas de segmentos con `path.relative`, pero su codificador de nombres estáticos sustituye solo `/`. En Windows se observó `academia/__next.academia/__PAGE__.txt` donde el navegador solicita `academia/__next.academia.__PAGE__.txt`. La comprobación del build ejecuta `scripts/static-export-paths.mjs` para copiar esos archivos de texto a los nombres planos esperados, conservando los originales y rechazando colisiones de contenido. Si el exportador ya produce nombres planos, como en Linux, no modifica nada.
 
-El navegador envía señales de lectura activa y el servidor calcula el tiempo transcurrido: una sesión empieza con cero, cada actualización acredita como máximo 30 segundos y una pausa de más de 90 segundos se descarta. Un cursor común evita contar dos veces intervalos coincidentes entre pestañas. Al cerrar antes de la siguiente actualización puede perderse el último intervalo. Una evaluación suspensa posterior no elimina una competencia ya aprobada.
+La corrección se aplica al artefacto publicable, sin rewrites exclusivos de la previsualización. Sus pruebas cubren rutas normales y dinámicas, repetición, salida plana y colisiones. Al actualizar Next, comprueba de nuevo el exportador y retira esta compatibilidad cuando ya no sea necesaria. La navegación entre páginas utiliza payloads estáticos además de HTML; ambos deben existir. [Exportación estática de Next.js](https://nextjs.org/docs/app/guides/static-exports).
 
-Para una copia segura de la base predeterminada:
+## Persistencia y backups
 
-1. Detén con `Ctrl+C` los servidores y cualquier prueba o proceso que use la base. Espera a que finalicen.
-2. Crea una carpeta de copias fuera de carpetas públicas y del control de versiones.
-3. Copia `prisma/dev.db` a esa carpeta. Si, tras el cierre normal, quedan archivos `dev.db-wal`, `dev.db-shm` o `dev.db-journal`, conserva también esos archivos con la misma base y sin escrituras concurrentes; no los elimines para forzar una copia.
-4. Guarda junto a la copia la versión del proyecto o su identificador de revisión.
+El catálogo educativo está versionado en TypeScript, separado de ejercicios y soluciones. El estado del estudiante se almacena en IndexedDB con Dexie. Conserva identificadores estables de preguntas y lecciones; los resultados existentes dependen de ellos.
 
-Para restaurar, detén todos los procesos, conserva primero una copia de la base actual y restaura el conjunto correspondiente. Utiliza una versión compatible del proyecto y aplica las migraciones pendientes con `npm run db:setup`. No mezcles archivos auxiliares de dos copias distintas. Una copia del código sin SQLite no contiene el historial de estudio.
+Añadir una versión de esquema requiere una migración que preserve los datos. Revisa los tests de actualizaciones e inicialización idempotente y añade casos que abran una base anterior. No uses `deleteDatabase` como ruta normal de actualización.
 
-## Desarrollo por módulos
+Para respaldar o mover datos, utiliza la exportación JSON de Ajustes. La importación valida, muestra el alcance y solicita confirmar la sustitución. El restablecimiento también pide confirmación. Mantén las copias fuera del código fuente y del directorio `public/`: contienen datos personales y no están cifradas.
 
-La academia define el currículo y las lecciones; el motor de ejercicios corrige en el servidor; el servicio de progreso guarda y consulta resultados. Prisma concentra el acceso a datos. Consulta los límites y el flujo en [ARCHITECTURE.md](ARCHITECTURE.md).
+La lectura depende de una pestaña visible y enfocada, medida con el reloj local. Los intervalos aún no guardados pueden perderse al cerrar. No representa competencia ni tiempo certificado. El objetivo semanal se reinicia el lunes en `Europe/Madrid`.
 
-Al publicar una lección:
+Una instalación previa con archivos SQLite debe conservarlos como archivo histórico. Esta migración no incluye conversión automática a IndexedDB. Ya no se utilizan comandos `db:setup`, semilla Prisma ni variables de conexión en la ejecución habitual.
 
-1. Incluye todos los apartados educativos definidos en [CURRICULUM.md](CURRICULUM.md), fuentes verificables y ejemplos etiquetados.
-2. Define preguntas con identificadores estables, soluciones y explicaciones. Separa las respuestas correctas del contenido que necesita el navegador.
-3. Añade casos de prueba que comprueben resultados de referencia y reglas de aprobación.
-4. Comprueba lectura, corrección, guardado, repaso y persistencia tras reiniciar.
+## GitHub Pages
 
-No marques un nivel como completado por el mero hecho de terminar las lecciones actualmente publicadas. No incluyas números de actividad, mercado o trading para rellenar un estado vacío.
+El workflow `.github/workflows/deploy.yml` se activa por push a `main` o de forma manual. Utiliza Node 22, `npm ci`, typecheck, tests, build, comprobación de `out/` y acciones oficiales de Pages. Se publica únicamente el artefacto generado; el despliegue requiere la rama `main`.
 
-## Límite de seguridad local
+Activa **Repository Settings → Pages → Build and deployment → Source: GitHub Actions**. Si el workflow indica que Pages no está configurado, completa ese paso con una cuenta que administre el repositorio y vuelve a ejecutar el workflow. Comprueba la URL devuelta por el trabajo `deploy` y recarga directamente una lección. [Guía oficial de workflows de Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-Esta versión resuelve un usuario local y carece de autenticación multiusuario. Mantén los servidores en loopback. Las validaciones y comprobaciones de origen de las rutas no sustituyen a un sistema de identidad y permisos.
+`configure-pages` no modifica automáticamente el código de Next en este workflow: `basePath` y exportación están definidos en `next.config.ts`. La subida de `out/` mediante Actions evita una compilación Jekyll y conserva `_next/`. [Acción oficial de subida de artefactos](https://github.com/actions/upload-pages-artifact).
 
-El uso de PostgreSQL requiere adaptar el proveedor y las migraciones y trasladar los datos; no se consigue únicamente cambiando `DATABASE_URL`. Antes de una versión compartida habrá que añadir autenticación, autorización, protección de sesiones y una revisión específica de despliegue.
+No se necesita un token personal en el código. Los permisos de escritura se conceden solo al trabajo de publicación mediante el token temporal de Actions. No copies claves privadas a `NEXT_PUBLIC_*`, `public/` o archivos TypeScript.
 
-## Incidencias frecuentes
+## Continuar la academia
 
-- **Faltan tablas o cliente Prisma:** comprueba `.env` y ejecuta `npm run db:setup`.
-- **SQLite bloqueado:** detén procesos de pruebas y servidores duplicados antes de repetir la operación. No borres la base para resolver el bloqueo.
-- **Puerto 3000 ocupado:** detén la instancia anterior antes de arrancar otra; producción y desarrollo no pueden compartir el mismo puerto.
-- **Playwright no encuentra Chromium:** ejecuta `npx playwright install chromium` y repite el flujo de [TESTING.md](TESTING.md).
-- **No se puede instalar o generar:** comprueba la versión de Node y el acceso al registro npm y a los binarios necesarios. La instalación inicial requiere red; el aprendizaje básico utiliza la base local.
+Mantén los apartados definidos en [CURRICULUM.md](CURRICULUM.md), fuentes verificables y ejemplos etiquetados. Cada modalidad publicada necesita casos de referencia, corrección explicada, guardado y repetición. Una nueva ruta de lección debe figurar en los parámetros estáticos y generar su HTML.
+
+Las herramientas futuras se implementarán progresivamente en el navegador. Para datos grandes, considera paginación, cuotas, importación por bloques y Web Workers. Las interfaces de proveedores externos deben hacer explícitas CORS, licencia y disponibilidad; no añadas datos inventados para cubrir una integración ausente.
+
+## Diagnóstico
+
+- **Portada 404:** utiliza `/forextrd/`, no la raíz del dominio.
+- **Vista previa antigua:** repite `npm run build`.
+- **Ruta profunda o recursos 404:** comprueba su archivo en `out/`, el prefijo y la barra final; no ocultes el fallo mediante fallback SPA.
+- **No aparecen mis datos:** verifica navegador, perfil, modo privado y origen; importa tu copia si has cambiado de entorno.
+- **Almacenamiento no disponible:** revisa restricciones del navegador y el mensaje de error. La interfaz no debe afirmar que ha guardado algo que IndexedDB rechazó.
+- **Falta Chromium:** instala la revisión requerida por Playwright. Los detalles de diagnóstico están en [TESTING.md](TESTING.md).
