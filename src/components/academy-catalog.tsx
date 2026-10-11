@@ -1,0 +1,14 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowRight, BookOpen, CheckCircle2, Clock3, Layers3, LockKeyhole, Search } from "lucide-react";
+import type { CurriculumModule } from "@/modules/academy/types";
+import { Button } from "@/components/ui/button";
+
+export function AcademyCatalog({ modules, lesson, completed }: { modules: CurriculumModule[]; lesson: { slug: string; title: string; durationMinutes: number }; completed: boolean }) {
+  const [query, setQuery] = useState("");
+  const filtered = modules.filter(module => `${module.title} ${module.description} ${module.topics.join(" ")}`.toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(query.toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
+  return <><div className="catalog-toolbar"><div className="catalog-summary"><span className="tag tag-green">1 LECCIÓN DISPONIBLE</span><span>13 niveles en el plan de estudios</span></div><label className="search-input"><Search size={17}/><span className="sr-only">Buscar niveles o conceptos</span><input placeholder="Buscar un concepto…" value={query} onChange={event => setQuery(event.target.value)}/></label></div>
+    <div className="module-list">{filtered.length === 0 && <div className="empty-state panel"><Search size={30}/><h2>No encontramos ese concepto</h2><p>Prueba con «riesgo», «dinero» o «análisis».</p><Button variant="secondary" onClick={() => setQuery("")}>Ver todos los niveles</Button></div>}{filtered.map(module => <section key={module.id} className={`panel module-card ${module.status === "available" ? "module-available" : ""}`}><div className="module-number">{String(module.id).padStart(2,"0")}</div><div className="module-content"><div className="module-header"><span className="eyebrow">NIVEL {module.id}</span><span className={`tag ${module.status === "available" ? "tag-green" : ""}`}>{module.status === "available" ? "PUBLICACIÓN PARCIAL" : "PENDIENTE"}</span></div><h2>{module.title}</h2><p>{module.description}</p><div className="topic-list">{module.topics.map(topic => <span key={topic}>{topic}</span>)}</div>{module.status === "available" && <Link href={`/academia/${lesson.slug}`} className="published-lesson"><span className="published-lesson-icon">{completed ? <CheckCircle2 size={20}/> : <BookOpen size={20}/>}</span><div><strong>{lesson.title}</strong><span><Clock3 size={12}/>{lesson.durationMinutes} min · 5 preguntas · {completed ? "Superada" : "Con evaluación"}</span></div><ArrowRight size={19}/></Link>}</div><span className="module-status-icon">{module.status === "available" ? <Layers3 size={21}/> : <LockKeyhole size={18}/>}</span></section>)}</div><p className="content-note">El plan completo es una hoja de ruta. Una lección superada no completa el nivel 0. Cada nueva unidad se publicará con teoría, práctica y evaluación verificadas.</p></>;
+}
