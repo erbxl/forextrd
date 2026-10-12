@@ -42,7 +42,7 @@ La exportación JSON identifica formato y versión e incluye los datos personale
 
 Una copia no es una firma de autenticidad ni un cifrado. Las validaciones evitan corrupción accidental y estados incompatibles; un usuario con acceso al navegador puede manipular su estado. No hay evaluación certificada a prueba de fraude.
 
-La auditoría de esta instalación no encontró datos SQLite de usuario producidos por la preparación anterior. Si existe un archivo antiguo en otra instalación, conservarlo: no se importa automáticamente ni debe borrarse al actualizar. El formato SQLite no es el JSON de copia de IndexedDB.
+El archivo anterior `prisma/dev.db` permanece intacto y excluido de Git. En la verificación final de solo lectura contiene un perfil y ningún intento, registro de progreso, sesión o actividad de estudio. El perfil y las preferencias de SQLite no se convierten automáticamente. Si otra instalación tiene progreso anterior, hay que conservar su archivo: no se importa automáticamente ni debe borrarse al actualizar. El formato SQLite no es el JSON de copia de IndexedDB.
 
 ## Hosting, seguridad e integraciones
 

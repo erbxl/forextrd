@@ -1,6 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = "http://127.0.0.1:3100/forextrd/";
+// Optional verification of the deployed static artifact with isolated browser
+// data. No test sends personal records to a remote backend.
+const remoteURL = process.env.PLAYWRIGHT_BASE_URL;
+const baseURL = remoteURL ?? "http://127.0.0.1:3100/forextrd/";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -21,7 +24,7 @@ export default defineConfig({
       : undefined,
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 1100 } } }],
-  webServer: {
+  webServer: remoteURL ? undefined : {
     command: "node scripts/e2e-server.mjs",
     url: baseURL,
     reuseExistingServer: false,

@@ -18,6 +18,14 @@
 - Workflow oficial de Pages con Node 22, instalación reproducible, comprobaciones y publicación exclusiva de `out/`.
 - Documentación adaptada a datos por navegador y origen, backups y límites del hosting.
 
+### Verificación — 12 de octubre de 2026
+
+- TypeScript y compilación estática correctos; 15 páginas generadas y 449 enlaces/recursos comprobados.
+- 107 pruebas unitarias y de integración aprobadas; cinco pruebas de navegador aprobadas tanto en local como directamente sobre GitHub Pages.
+- Exportación, restablecimiento confirmado y restauración JSON comprobados de extremo a extremo; archivos corruptos e incompatibles rechazados sin cambiar los datos.
+- Cero vulnerabilidades reportadas por `npm audit --omit=dev` en esa ejecución.
+- Publicación de la revisión `2430506` confirmada mediante [Actions](https://github.com/erbxl/forextrd/actions/runs/38146360654), respuesta HTTP 200 y suite completa sobre la web pública. Entorno y resultados en [TESTING.md](TESTING.md).
+
 ### Límites
 
 - Las respuestas del frontend y los datos locales son inspeccionables; no se ofrece certificación resistente a manipulación.

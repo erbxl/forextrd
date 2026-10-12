@@ -69,8 +69,8 @@ test("carga el export estático y navega por rutas reales bajo /forextrd/", asyn
   await expect(page.getByRole("heading", { name: firstLesson.title, exact: true })).toBeVisible();
 
   const redirect = await request.get("academia", { maxRedirects: 0 });
-  expect(redirect.status()).toBe(308);
-  expect(redirect.headers().location).toBe("/forextrd/academia/");
+  expect([301, 308]).toContain(redirect.status());
+  expect(new URL(redirect.headers().location, page.url()).pathname).toBe("/forextrd/academia/");
   expect((await request.get("ruta-inexistente/")).status()).toBe(404);
   expect((await request.get("%2e%2e/package.json")).status()).toBe(404);
 });
@@ -189,7 +189,9 @@ test("rechaza JSON corrupto y versiones incompatibles sin cambiar los datos", as
     ["version-futura.json", JSON.stringify({ format: "forex-academy-pro", version: 999, tables: {} })],
   ]) {
     await upload.setInputFiles({ name, mimeType: "application/json", buffer: Buffer.from(text) });
-    await expect(page.getByRole("alert")).toBeVisible();
+    // Next also has an ARIA route announcer. Assert this feature's error,
+    // not any unrelated alert in the application shell.
+    await expect(page.getByRole("region", { name: "Tus datos, contigo" }).getByRole("alert")).toBeVisible();
     await expect(page.getByRole("heading", { name: "Previsualización de la copia" })).toHaveCount(0);
     await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Conservar este perfil");
     await expect(page.getByRole("radio", { name: "6", exact: true })).toBeChecked();

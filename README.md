@@ -2,13 +2,13 @@
 
 Academia de Forex en español con Next.js, React y TypeScript, exportada como **sitio estático para GitHub Pages**. La Fase 1 conserva su diseño, una primera unidad educativa completa, ejercicios, dashboard y progreso. La corrección y la persistencia se ejecutan en el navegador, sin un servidor de aplicación.
 
-URL de publicación prevista: [erbxl.github.io/forextrd/](https://erbxl.github.io/forextrd/). Preparar el workflow no confirma una publicación remota: su verificación se registra en [TESTING.md](TESTING.md).
+Sitio publicado: [erbxl.github.io/forextrd/](https://erbxl.github.io/forextrd/). El 12 de octubre de 2026 se verificaron el despliegue y las cinco pruebas funcionales de navegador directamente sobre GitHub Pages. Evidencia y entorno en [TESTING.md](TESTING.md).
 
 ## Qué está disponible
 
 - Navegación lateral responsive, modo oscuro y claro, dashboard y perfil local.
 - Currículo de 13 niveles: nivel 0 parcialmente publicado y resto del contenido pendiente.
-- Lección «Dinero y poder adquisitivo», con explicaciones, ejemplos didácticos, recurso visual y fuentes oficiales del BCE.
+- Lección «Dinero, precios y poder adquisitivo», con explicaciones, ejemplos didácticos, recurso visual y fuentes oficiales del BCE.
 - Cinco preguntas corregibles y repetibles, explicaciones y conservación de intentos.
 - Aprobación con al menos un 80 % y cálculo numérico obligatorio correcto; completar exige además confirmar la lectura.
 - Progreso, conceptos para repasar, lectura activa y objetivo semanal de días de estudio.
@@ -48,9 +48,11 @@ npm run test:e2e
 
 La instalación del navegador solo es necesaria cuando falta la revisión de Chromium requerida. Playwright inicia su propio servidor de archivos y cada prueba dispone de un contexto de navegador nuevo. Consulta el alcance y resultados en [TESTING.md](TESTING.md).
 
+Verificación completada: TypeScript, **107 pruebas unitarias y de integración**, compilación estática y **5 pruebas de navegador tanto en local como en el sitio publicado**. Incluye navegación, evaluación, persistencia, preferencias y exportación/restauración de copias.
+
 ## Publicación en GitHub Pages
 
-En el repositorio de GitHub selecciona **Settings → Pages → Build and deployment → Source: GitHub Actions**. El workflow de `.github/workflows/deploy.yml` se ejecuta tras un push a `main` o manualmente: instala con `npm ci`, comprueba tipos, ejecuta tests, compila y publica únicamente `out/` mediante las acciones oficiales. La publicación manual también se limita a `main`. [Documentación oficial de GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+Este repositorio ya utiliza GitHub Actions para Pages. Para configurar otra instalación selecciona **Settings → Pages → Build and deployment → Source: GitHub Actions**. El workflow de `.github/workflows/deploy.yml` se ejecuta tras un push a `main` o manualmente: instala con `npm ci`, comprueba tipos, ejecuta tests, compila y publica únicamente `out/` mediante las acciones oficiales. La publicación manual también se limita a `main`. [Documentación oficial de GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 La configuración fija `basePath: "/forextrd"` y `trailingSlash: true`. Las rutas profundas generan su propio `index.html`; no dependen de redirigir cualquier 404 a la portada.
 
