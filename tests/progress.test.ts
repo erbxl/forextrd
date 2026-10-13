@@ -1,6 +1,6 @@
 import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { firstLesson } from "@/modules/academy/content";
+import { firstLesson, lessons } from "@/modules/academy/content";
 import { AcademyDatabase, initializeDatabase } from "@/modules/storage/db";
 import { completeLesson, getProgress, madridDate, recordStudy, saveAttempt, updateSettings } from "@/modules/progress/service";
 
@@ -16,10 +16,10 @@ beforeEach(async () => {
 afterEach(async () => { vi.restoreAllMocks(); await client.delete(); });
 
 describe("progreso persistente en IndexedDB", () => {
-  it("empieza en cero y solo cuenta la lección realmente publicada", async () => {
+  it("empieza en cero y cuenta todo el programa publicado", async () => {
     const snapshot = await getProgress(client, instant);
     expect(snapshot.stats).toEqual({
-      completedLessons: 0, publishedLessons: 1, totalAttempts: 0, answeredQuestions: 0,
+      completedLessons: 0, publishedLessons: lessons.length, completedModules: 0, totalAttempts: 0, answeredQuestions: 0,
       correctAnswers: 0, accuracy: null, studySeconds: 0, streak: 0, weeklyStudyDays: 0,
     });
     expect(snapshot.activity).toHaveLength(7);

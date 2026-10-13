@@ -14,9 +14,9 @@ function correctAnswers(): Record<string, string | number> {
 }
 
 describe("first educational unit", () => {
-  it("publishes only the implemented lesson and marks all later levels as planned", () => {
+  it("preserves the original lesson and publishes all thirteen levels", () => {
     expect(curriculum.map((module) => module.id)).toEqual(Array.from({ length: 13 }, (_, index) => index));
-    expect(curriculum.filter((module) => module.status === "available").map((module) => module.id)).toEqual([0]);
+    expect(curriculum.filter((module) => module.status === "available").map((module) => module.id)).toEqual(Array.from({ length: 13 }, (_, index) => index));
     expect(getLesson("dinero-y-poder-adquisitivo")).toBe(firstLesson);
     expect(getLesson("leccion-inexistente")).toBeUndefined();
   });

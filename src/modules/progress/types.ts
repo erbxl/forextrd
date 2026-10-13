@@ -12,6 +12,7 @@ export type ProgressSnapshot = {
   stats: {
     completedLessons: number;
     publishedLessons: number;
+    completedModules: number;
     totalAttempts: number;
     answeredQuestions: number;
     correctAnswers: number;

@@ -1,6 +1,6 @@
 export type Question = {
   id: string;
-  type: "choice" | "boolean" | "number";
+  type: "choice" | "boolean" | "number" | "text" | "order";
   concept: string;
   prompt: string;
   options?: string[];
@@ -9,8 +9,10 @@ export type Question = {
   explanation: string;
   unit?: string;
   required?: boolean;
+  acceptedAnswers?: string[];
+  chart?: { candles: { open: number; high: number; low: number; close: number }[]; caption: string };
 };
-export type PublicQuestion = Omit<Question, "answer" | "tolerance" | "explanation">;
+export type PublicQuestion = Omit<Question, "answer" | "tolerance" | "explanation" | "acceptedAnswers">;
 export type LessonSection = {
   id: string;
   title: string;
@@ -18,6 +20,8 @@ export type LessonSection = {
   takeaway?: string;
 };
 export type Lesson = {
+  kind?: "lesson" | "exam";
+  diagram?: { title: string; nodes: string[]; caption: string };
   slug: string;
   title: string;
   subtitle: string;

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { firstLesson, getLesson } from "@/modules/academy/content";
+import { lessons, learningUnits, getLesson } from "@/modules/academy/content";
+import { canStudy, getModuleProgress } from "@/modules/academy/progression";
 import { evaluateAnswers } from "@/modules/exercises/evaluate";
 import { getDatabase, initializeDatabase, type AcademyDatabase } from "@/modules/storage/db";
 import { madridDate, shiftDate } from "@/modules/storage/dates";
@@ -38,7 +39,7 @@ export async function getProgress(client = getDatabase(), now = new Date()): Pro
     while (activeDays.has(cursor)) { streak += 1; cursor = shiftDate(cursor, -1); }
     const answeredQuestions = attempts.reduce((sum, attempt) => sum + attempt.totalCount, 0);
     const correctAnswers = attempts.reduce((sum, attempt) => sum + attempt.correctCount, 0);
-    const views = [firstLesson].map((lesson) => {
+    const views = learningUnits.map((lesson) => {
       const history = attempts.filter((attempt) => attempt.lessonSlug === lesson.slug);
       const stored = progress.find((entry) => entry.lessonSlug === lesson.slug);
       return {
@@ -50,8 +51,9 @@ export async function getProgress(client = getDatabase(), now = new Date()): Pro
     return {
       user: { name: user.name, weeklyGoal: user.weeklyGoal }, lessons: views,
       stats: {
-        completedLessons: views.filter((lesson) => lesson.completedAt).length,
-        publishedLessons: views.length, totalAttempts: attempts.length, answeredQuestions, correctAnswers,
+        completedLessons: views.filter((lesson) => lesson.completedAt && getLesson(lesson.slug)?.kind !== "exam").length,
+        publishedLessons: lessons.length, completedModules: getModuleProgress(views).filter(module => module.completed).length,
+        totalAttempts: attempts.length, answeredQuestions, correctAnswers,
         accuracy: answeredQuestions === 0 ? null : Math.round(correctAnswers / answeredQuestions * 100),
         studySeconds: activity.reduce((sum, day) => sum + day.studySeconds, 0), streak,
         weeklyStudyDays: week.filter((day) => day.date >= monday && activeDays.has(day.date)).length,
@@ -64,7 +66,7 @@ export async function getProgress(client = getDatabase(), now = new Date()): Pro
 }
 
 const answersSchema = z.record(z.string().min(1).max(80), z.union([
-  z.string().min(1).max(200), z.number().finite().min(-1e12).max(1e12),
+  z.string().min(1).max(2000), z.number().finite().min(-1e12).max(1e12),
 ])).refine((answers) => Object.keys(answers).length > 0 && Object.keys(answers).length <= 100);
 
 export async function saveAttempt(slug: string, answers: Record<string, string | number>, client = getDatabase(), now = new Date()) {
@@ -77,6 +79,8 @@ export async function saveAttempt(slug: string, answers: Record<string, string |
   const id = crypto.randomUUID();
   const attempt: StoredAttempt = { ...result, id, lessonSlug: slug, answers: parsed.data, createdAt: now.toISOString() };
   await client.transaction("rw", [client.attempts, client.lessonProgress, client.dailyActivity, client.reviewConcepts], async () => {
+    const completions = (await client.lessonProgress.toArray()).map(item => ({ slug: item.lessonSlug, completedAt: item.completedAt }));
+    if (!canStudy(slug, completions)) throw new Error("Completa las lecciones y el examen del nivel anterior. Para examinarte, completa primero todas las lecciones del nivel.");
     if (!await client.lessonProgress.get(slug)) await client.lessonProgress.add({ lessonSlug: slug, readAt: null, completedAt: null });
     await client.attempts.add(attempt);
     for (const feedback of result.feedback) if (!feedback.correct) {
@@ -96,6 +100,8 @@ export async function completeLesson(slug: string, read: boolean, client = getDa
   if (read !== true) throw new Error("Confirma que has estudiado la lección.");
   await initializeDatabase(client, now);
   return client.transaction("rw", [client.attempts, client.lessonProgress, client.dailyActivity], async () => {
+    const completions = (await client.lessonProgress.toArray()).map(item => ({ slug: item.lessonSlug, completedAt: item.completedAt }));
+    if (!canStudy(slug, completions)) throw new Error("Esta unidad todavía está bloqueada por sus requisitos previos.");
     const attempts = await client.attempts.where("lessonSlug").equals(slug).toArray();
     if (!attempts.some((attempt) => attempt.passed)) throw new Error("Aprueba la evaluación antes de completar la lección.");
     const existing = await client.lessonProgress.get(slug);

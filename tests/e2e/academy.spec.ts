@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { firstLesson } from "../../src/modules/academy/content";
+import { firstLesson, lessons } from "../../src/modules/academy/content";
 
 const lessonPath = `academia/${firstLesson.slug}/`;
 let runtimeProblems: string[] = [];
@@ -54,7 +54,7 @@ async function saveSettings(page: Page, name = "Ana de prueba", goal = "5") {
 test("carga el export estático y navega por rutas reales bajo /forextrd/", async ({ page, request }) => {
   await page.goto("./");
   await expect(page.getByRole("heading", { name: "Cada paso cuenta." })).toBeVisible();
-  await expect(page.getByText("0/1 lección publicada", { exact: true })).toBeVisible();
+  await expect(page.getByText(`0/${lessons.length} lecciones completadas`, { exact: true })).toBeVisible();
   await expect(page.getByText("0 evaluaciones realizadas", { exact: true })).toBeVisible();
   expect(await page.evaluate(async () => (await indexedDB.databases()).some(database => database.name === "forex-academy-pro"))).toBe(true);
   await mkdir(join(process.cwd(), "artifacts"), { recursive: true });
@@ -99,13 +99,13 @@ test("corrige, exige el cálculo y conserva intentos y finalización en IndexedD
   await page.reload();
   await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
 
-  await page.getByRole("link", { name: "Ver mi progreso", exact: true }).click();
+  await page.getByRole("link", { name: "Mi progreso", exact: true }).click();
   await expect(page).toHaveURL(/\/forextrd\/progreso\/$/);
-  await expect(page.getByText("DEMOSTRADA", { exact: true })).toBeVisible();
+  await expect(page.getByText("0 de 13 niveles completados.", { exact: true })).toBeVisible();
   await expect(page.getByText("9 de 10 respuestas correctas.", { exact: true })).toBeVisible();
   await page.goto("./");
-  await expect(page.getByText("1/1 lección publicada", { exact: true })).toBeVisible();
-  await expect(page.getByText("Primera lección superada", { exact: true })).toBeVisible();
+  await expect(page.getByText(`1/${lessons.length} lecciones completadas`, { exact: true })).toBeVisible();
+  await expect(page.getByText("Nivel 0 · Fundamentos financieros", { exact: true })).toBeVisible();
 });
 
 test("guarda ajustes y tema y conserva navegación móvil", async ({ page }) => {
@@ -159,7 +159,7 @@ test("exporta, restablece y restaura una copia solo después de previsualizar y 
   await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Estudiante");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.goto("./");
-  await expect(page.getByText("0/1 lección publicada", { exact: true })).toBeVisible();
+  await expect(page.getByText(`0/${lessons.length} lecciones completadas`, { exact: true })).toBeVisible();
   await expect(page.getByText("0 evaluaciones realizadas", { exact: true })).toBeVisible();
 
   await page.goto("ajustes/");
@@ -176,7 +176,7 @@ test("exporta, restablece y restaura una copia solo después de previsualizar y 
   await page.reload();
   await expect(page.getByRole("textbox", { name: /¿Cómo te llamas\?/ })).toHaveValue("Perfil de copia");
   await page.goto("./");
-  await expect(page.getByText("1/1 lección publicada", { exact: true })).toBeVisible();
+  await expect(page.getByText(`1/${lessons.length} lecciones completadas`, { exact: true })).toBeVisible();
   await page.goto(lessonPath);
   await expect(page.getByRole("heading", { name: "Lección completada" })).toBeVisible();
 });

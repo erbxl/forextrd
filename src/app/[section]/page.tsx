@@ -4,6 +4,9 @@ import { ArrowRight, CheckCircle2, Construction, Layers3 } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { Button } from "@/components/ui/button";
 import { firstLesson } from "@/modules/academy/content";
+import CalculatorsPage from "@/components/pages/calculators";
+import JournalPage from "@/components/pages/journal";
+import MentorPage from "@/components/pages/mentor";
 
 const roadmap: Record<string,{title:string;phase:number;description:string;features:string[]}> = {
   herramientas:{title:"Calculadoras financieras",phase:3,description:"Entender cada fórmula antes de tomar una decisión.",features:["Pips, valor del pip y tamaño de posición","Riesgo, margen y costes con unidades explícitas","Pruebas matemáticas con resultados de referencia"]},
@@ -18,5 +21,8 @@ export const dynamicParams = false;
 export async function generateMetadata({params}:{params:Promise<{section:string}>}) { const {section} = await params; return {title:roadmap[section]?.title ?? "Página no encontrada"}; }
 export default async function PlannedPage({params}:{params:Promise<{section:string}>}) {
   const {section} = await params; const item=roadmap[section]; if(!item) notFound();
+  if(section === "herramientas") return <CalculatorsPage/>;
+  if(section === "diario") return <JournalPage/>;
+  if(section === "mentor") return <MentorPage/>;
   return <div className="page-enter"><SectionHeading eyebrow="HOJA DE RUTA" title={item.title} description={item.description}/><section className="panel planned-panel"><span className="planned-icon"><Construction size={35}/></span><span className="tag tag-amber">PENDIENTE · FASE {item.phase}</span><h2>Primero, una base sólida.</h2><p>Esta herramienta todavía no está implementada. La Fase 1 se centra en la academia, la primera evaluación y tu progreso persistente.</p><div className="planned-features"><h3>Qué contemplará esta fase</h3>{item.features.map(feature => <div key={feature}><Layers3 size={17}/><span>{feature}</span></div>)}</div><Button asChild><Link href={`/academia/${firstLesson.slug}`}>Empezar por los fundamentos<ArrowRight size={17}/></Link></Button><div className="available-note"><CheckCircle2 size={16}/>Ya disponible: una lección completa con 5 preguntas y corrección explicada.</div></section></div>;
 }

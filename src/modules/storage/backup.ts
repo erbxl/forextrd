@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { firstLesson, getLesson } from "@/modules/academy/content";
 import { evaluateAnswers } from "@/modules/exercises/evaluate";
+import { canStudy } from "@/modules/academy/progression";
 import { AcademyDatabase, defaultPreferences, defaultProfile, getDatabase, initializeDatabase } from "./db";
 import { madridDate } from "./dates";
 import { TABLE_NAMES, deriveReviewConcepts, type DailyActivity, type JsonValue, type PersonalTables } from "./types";
@@ -176,6 +177,11 @@ function validateEnvelope(raw: unknown): BackupEnvelope {
       !tables.attempts.some((attempt) => attempt.lessonSlug === progress.lessonSlug && attempt.passed && attempt.createdAt <= progress.completedAt!))) {
       throw new Error("Una lección completada necesita lectura y un intento aprobado verificable anterior a su finalización.");
     }
+  }
+  const completions = tables.lessonProgress.map(item => ({ slug: item.lessonSlug, completedAt: item.completedAt }));
+  for (const attempt of tables.attempts) {
+    const priorCompletions = completions.map(item => ({ ...item, completedAt: item.completedAt && item.completedAt <= attempt.createdAt ? item.completedAt : null }));
+    if (!canStudy(attempt.lessonSlug, priorCompletions)) throw new Error("Un intento no cumple los requisitos previos del nivel o del examen.");
   }
   const daily = new Map<string, DailyActivity>(tables.dailyActivity.map((day) => [day.date, { ...day, attempts: 0, completions: 0 }]));
   const activityFor = (timestamp: string): DailyActivity => {

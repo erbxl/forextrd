@@ -1,5 +1,7 @@
 import type { AssessmentResult, Lesson } from "../academy/types";
 
+const normalizeText = (value: string) => value.trim().toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+
 /** Pure grading function. Never trust a submitted score or coerce answer types. */
 export function evaluateAnswers(
   lesson: Lesson,
@@ -51,6 +53,22 @@ export function evaluateAnswers(
         ? 0
         : Number.EPSILON * Math.max(1, Math.abs(submitted), Math.abs(question.answer)) * 4;
       correct = Math.abs(submitted - question.answer) <= tolerance + roundingAllowance;
+    } else if (question.type === "text") {
+      if (typeof submitted !== "string" || !submitted.trim() || typeof question.answer !== "string") {
+        throw new Error(`Escribe una respuesta para la pregunta: ${question.id}.`);
+      }
+      correct = [question.answer, ...(question.acceptedAnswers ?? [])].some(answer => normalizeText(answer) === normalizeText(submitted));
+    } else if (question.type === "order") {
+      const options = question.options ?? [];
+      const submittedSteps = typeof submitted === "string" ? submitted.split(" | ") : [];
+      const reference = typeof question.answer === "string" ? question.answer.split(" | ") : [];
+      if (options.length < 2 || new Set(options).size !== options.length || reference.length !== options.length || new Set(reference).size !== options.length || reference.some(step => !options.includes(step))) {
+        throw new Error(`La pregunta ${question.id} no tiene un orden de referencia válido.`);
+      }
+      if (submittedSteps.length !== options.length || new Set(submittedSteps).size !== options.length || submittedSteps.some(step => !options.includes(step))) {
+        throw new Error(`Ordena todos los pasos de la pregunta: ${question.id}.`);
+      }
+      correct = submitted === question.answer;
     } else {
       if (
         (question.type !== "choice" && question.type !== "boolean") ||

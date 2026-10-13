@@ -16,15 +16,16 @@ const navigation: {group:string;items:NavigationItem[]}[] = [
     { href: "/progreso", label: "Mi progreso", icon: ChartNoAxesCombined },
   ] },
   { group: "PRACTICA", items: [
-    { href: "/herramientas", label: "Calculadoras", icon: Wrench, pending: true },
+    { href: "/herramientas", label: "Calculadoras", icon: Wrench },
     { href: "/simulador", label: "Simulador", icon: CandlesIcon, pending: true },
     { href: "/replay", label: "Trading Replay", icon: Play, pending: true },
     { href: "/backtesting", label: "Backtesting", icon: FlaskConical, pending: true },
-    { href: "/diario", label: "Diario de trading", icon: NotebookPen, pending: true },
+    { href: "/diario", label: "Diario de trading", icon: NotebookPen },
   ] },
   { group: "EXPLORA", items: [
     { href: "/recursos", label: "Biblioteca", icon: BookOpen },
-    { href: "/mentor", label: "Forex Mentor", icon: Sparkles, pending: true },
+    { href: "/glosario", label: "Glosario", icon: BookOpen },
+    { href: "/mentor", label: "Forex Mentor", icon: Sparkles },
   ] },
 ];
 
@@ -48,7 +49,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     window.addEventListener("keydown", escape);
     return () => { document.body.style.overflow = previous; window.removeEventListener("keydown", escape); };
   }, [mobileOpen]);
-  const title = pathname.startsWith("/academia/") ? "Tu primera lección" : navigation.flatMap(group => group.items).find(item => item.href === pathname)?.label ?? "Ajustes";
+  const title = pathname.startsWith("/academia/") ? "Mi formación" : navigation.flatMap(group => group.items).find(item => item.href === pathname)?.label ?? "Ajustes";
   async function toggleTheme() {
     setThemeError("");
     try { await updatePreferences({theme:light ? "dark" : "light"}); }
@@ -68,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="sidebar-bottom">
         <div className="learning-note"><ShieldCheck size={19}/><p>Aprende con criterio.<br/><span>Practica sin arriesgar capital.</span></p></div>
         <Link href="/ajustes" className={`nav-item ${pathname === "/ajustes" ? "active" : ""}`}><Settings2 size={18}/><span>Ajustes</span></Link>
-        <div className="local-profile"><span className="avatar"><GraduationCap size={19}/></span><div><strong>Perfil de aprendizaje</strong><span>En este navegador · Fase 1</span></div><PanelLeftClose size={16}/></div>
+        <div className="local-profile"><span className="avatar"><GraduationCap size={19}/></span><div><strong>Perfil de aprendizaje</strong><span>Progreso en este navegador</span></div><PanelLeftClose size={16}/></div>
       </div>
     </aside>
     <div className="main-shell">

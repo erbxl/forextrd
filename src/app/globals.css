@@ -467,4 +467,100 @@ ul,ol { padding-left:22px; }
 @media (max-width:1050px) { .hero-card { grid-template-columns:1.4fr 1fr; } .hero-card h2 { font-size:29px; } .hero-copy > p { font-size:10px; } .hero-visual { padding:20px 13px; } .chart-mini-title { font-size:6px; } .chart-badge { display:none; } .hero-actions > span { display:none; } .hero-category { font-size:6px; } .dashboard-columns { grid-template-columns:1fr; } .dashboard-side { display:grid; grid-template-columns:1.15fr 1fr; gap:15px; } .review-card { flex-direction:column; justify-content:center; gap:14px; padding:26px; } .review-card .eyebrow { font-size:8px; } .review-card h3 { font-size:15px; } .review-card p { font-size:11px; } .review-card > svg:last-child { display:none; } .study-plan .panel-heading { margin-bottom:10px; } .streak-number { margin:10px 0 12px; } .streak-number > strong { font-size:29px; } .weekly-goal { margin-top:16px; } .path-row p { max-width:100%; } .next-step-grid { grid-template-columns:1fr; } .step-card { padding:18px; gap:16px; } .step-card p { font-size:10px; } .step-card .small { font-size:7px; } .step-card h3 { font-size:12px; } .step-card-icon { width:37px; height:39px; } .step-card > svg { display:block; } .lesson-layout { grid-template-columns:1fr; } .lesson-toc { display:none; } .lesson-article { max-width:none; } .lesson-hero h1 { font-size:32px; } .lesson-metadata { gap:15px; } .lesson-metadata span { font-size:9px; } .catalog-toolbar { flex-wrap:wrap; } .catalog-summary { font-size:10px; } .search-input { flex:1; } .module-card { padding:22px; gap:18px; } .module-number { width:34px; font-size:24px; } .module-card h2 { font-size:18px; } .two-column { grid-template-columns:1fr; } .settings-layout { grid-template-columns:1fr; } .installation-info > div { margin:19px 0; } .resource-grid { grid-template-columns:1fr; } .resource-card { padding:25px; } .resource-card > div { margin-bottom:17px; } .resource-card h2 { font-size:19px; } .planned-panel { padding:32px; } .app-footer { margin:0 26px; font-size:7px; } .app-footer > span:first-child { max-width:220px; line-height:1.9; } }
 @media (max-width:800px) { .sidebar { transform:translateX(-100%); transition:transform .22s ease; width:252px; padding:25px 18px 0; } .sidebar-open { transform:translateX(0); } .sidebar-overlay { display:block; position:fixed; inset:0; z-index:39; border:0; background:#020809b5; backdrop-filter:blur(2px); } .mobile-close { display:flex; position:absolute; right:8px; top:12px; width:29px; height:29px; } .mobile-menu { display:flex; margin-left:-5px; } .main-shell { margin-left:0; } .topbar { height:61px; padding:0 23px; } .breadcrumb { gap:10px; } .page-content { padding:27px 24px; } .nav-item { font-size:12px; min-height:43px; } .nav-label { font-size:10px; } .workspace-label { font-size:8px; } .sidebar .local-profile strong { font-size:11px; } .sidebar .local-profile div > span { font-size:9px; } .learning-note p { font-size:10px; } .learning-note p span { font-size:9px; } .hero-card h2 { font-size:34px; } .hero-copy > p { font-size:11px; } .hero-category { font-size:7px; } .hero-visual { padding:25px 17px; } .chart-mini-title { font-size:7px; } .stat-label { font-size:10px; } .stat-bottom { font-size:8px; } .header-actions { gap:11px; } .header-plan { font-size:9px; padding-left:13px; } .dashboard-heading h1 { font-size:29px; } .lesson-toc { display:none; } .app-footer { margin:0 24px; } }
 @media (max-width:570px) { .topbar { padding:0 16px; } .breadcrumb-root,.breadcrumb > svg { display:none; } .header-actions .local-tag { display:none; } .header-plan { padding-left:8px; } .header-plan span { display:none; } .header-plan > svg:last-child { display:none; } .header-actions { gap:7px; } .page-content { padding:25px 17px; } .dashboard-heading { margin-bottom:22px; } .dashboard-heading h1 { font-size:27px; } .dashboard-heading > div > p:last-child { font-size:11px; line-height:1.8; max-width:330px; } .hero-card { grid-template-columns:1fr; } .hero-copy { padding:25px; } .hero-card h2 { font-size:35px; margin:19px 0 13px; } .hero-category { font-size:7px; } .hero-visual { border-left:0; border-top:1px solid #28453a66; padding:20px 26px 18px; } .hero-visual .purchasing-chart { max-width:360px; margin:auto; width:100%; } .hero-visual svg { max-height:175px; } .chart-mini-title { font-size:7px; } .chart-badge { display:block; } .hero-chart-note { font-size:7px; padding-top:13px; } .hero-actions > span { display:flex; } .hero-actions .button { font-size:11px; padding:12px 14px; } .hero-actions { gap:14px; } .stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; margin-bottom:22px; } .stat-card { padding:17px 13px; } .stat-card > strong { font-size:28px; margin:13px 0; } .stat-card > strong > span { font-size:8px; } .stat-label { font-size:9px; } .stat-label svg { width:14px; } .stat-bottom { font-size:7px; gap:5px; line-height:1.8; } .dashboard-side { grid-template-columns:1fr; gap:14px; } .study-plan { padding:23px; } .study-plan .panel-heading { margin-bottom:20px; } .streak-number { margin-bottom:23px; } .streak-number > strong { font-size:39px; } .streak-number b { font-size:11px; } .week-day { font-size:9px; } .week-day > div { width:34px; height:35px; } .weekly-goal { margin-top:23px; font-size:10px; } .goal-link { font-size:10px; } .review-card { flex-direction:row; gap:15px; padding:23px; } .review-card h3 { font-size:13px; } .review-card p { font-size:10px; } .review-card .eyebrow { font-size:7px; } .path-row { gap:12px; padding:19px 0; } .path-row h3 { font-size:11px; } .path-row p { font-size:9px; } .learning-path .panel-heading .text-link { font-size:8px; gap:3px; } .panel-heading h2 { font-size:15px; } .learning-path .panel-heading h2 { font-size:15px; } .path-row-label { font-size:7px; } .path-row-label .tag { font-size:5px; } .path-step { width:33px; height:36px; } .path-arrow { width:26px; height:28px; flex-shrink:0; } .path-footnote { font-size:8px; } .section-title > span { display:none; } .phase-notice { align-items:flex-start; gap:8px; } .phase-notice p { font-size:8px; } .phase-notice .tag { font-size:7px; } .phase-notice > a { display:none; } .app-footer { flex-direction:column; gap:8px; margin:0 17px; font-size:7px; padding:20px 0; } .app-footer > span:first-child { max-width:none; } .page-heading { margin-bottom:26px; } .page-heading h1 { font-size:28px; } .page-heading .eyebrow { font-size:9px; letter-spacing:.09em; } .page-description { font-size:12px; } .catalog-summary { flex-wrap:wrap; gap:8px; } .catalog-toolbar { gap:15px; } .module-card { padding:20px 16px; gap:12px; } .module-number { width:24px; font-size:20px; padding-top:3px; } .module-status-icon { display:none; } .module-card h2 { font-size:17px; } .module-content > p { font-size:11px; } .module-header { gap:7px; } .module-header .eyebrow { font-size:8px; } .module-header .tag { font-size:6px; } .topic-list > span { font-size:8px; } .published-lesson { padding:13px 11px; gap:10px; margin-left:-36px; } .published-lesson strong { font-size:11px; line-height:1.8; } .published-lesson div > span { font-size:8px; } .published-lesson > svg { width:16px; } .content-note { font-size:10px; } .lesson-hero h1 { font-size:30px; } .lesson-hero .eyebrow { font-size:8px; } .lesson-hero > p { font-size:12px; } .lesson-metadata { gap:11px; } .lesson-metadata span { font-size:9px; } .lesson-metadata span:last-child { display:none; } .objectives-card { padding:20px 17px; gap:10px; } .objectives-card > svg { width:18px; } .objectives-card h2 { font-size:16px; } .objectives-card li { font-size:11px; } .lesson-section-title h2,.lesson-text-section > h2 { font-size:20px; } .lesson-text-section > p { font-size:12px; } .worked-example { padding:22px 18px; } .worked-example h2 { font-size:18px; } .worked-example > p,.worked-example li,.example-conclusion { font-size:11px; } .lesson-chart { padding:21px 16px; } .chart-full .chart-mini-title { font-size:7px; } .chart-full .chart-badge { font-size:5px; } .chart-full .chart-legend { font-size:8px; } .lesson-summary { padding:22px 18px; } .lesson-summary li { font-size:11px; } .assessment-section > .lesson-section-title { flex-direction:column; align-items:flex-start; gap:8px; } .question-card { padding:17px 13px; } .question-card legend { padding:0 5px; font-size:12px; } .question-meta { flex-wrap:wrap; font-size:8px; gap:8px; } .question-meta .tag { font-size:6px; } .answer-option { padding:11px 10px; gap:8px; font-size:11px; } .option-letter { display:none; } .assessment-result { gap:15px; padding:19px 16px; } .completion-card { padding:23px 17px; gap:12px; } .completion-card > svg { width:21px; } .completion-card h3 { font-size:16px; } .completion-card p { font-size:11px; } .assessment-note { align-items:flex-start; font-size:9px; } .source-list > a { padding:15px 12px; gap:10px; } .source-list strong { font-size:11px; } .source-list > a > svg:last-child { display:none; } .two-column > .panel { padding:22px 18px; } .competence-list li { font-size:9px; gap:7px; } .competence-list strong { font-size:8px; } .attempt-row { gap:10px; } .attempt-row strong { font-size:10px; } .attempt-row .tag { font-size:6px; } .attempt-row div > span { font-size:8px; } .settings-section { padding:23px 18px; } .goal-options { gap:7px; } .goal-options label { min-height:39px; font-size:12px; } .installation-info { padding:23px 20px; } .resource-intro { padding:22px 20px; gap:14px; align-items:flex-start; } .resource-intro > svg { width:24px; } .resource-intro h2 { font-size:18px; } .resource-intro p { font-size:11px; } .planned-panel { padding:30px 19px; margin:28px auto; } .planned-panel > h2 { font-size:24px; } .planned-panel > p { font-size:12px; } .planned-features { padding:19px 16px; } .available-note { align-items:flex-start; font-size:9px; } }
+.module-progress { margin:22px 0 15px; max-width:480px; font:11px var(--font-mono); color:var(--muted); }
+.module-progress .progress-track { margin-top:10px; }
+.module-lock { display:flex; align-items:center; gap:8px; color:var(--warm); font-size:12px; margin:15px 0; }
+.catalog-toggle { border:0; background:none; cursor:pointer; padding:12px 0; font:inherit; font-size:12px; }
+.module-lessons { margin-top:5px; }
+.module-lessons .published-lesson { margin:8px 0; }
+.locked-lesson { opacity:.6; }
+.exam-link { border-color:var(--accent); }
+.locked-unit { padding:40px; max-width:800px; margin:auto; }
+.locked-unit h1 { font-size:28px; margin:24px 0; }
+.locked-unit p { color:var(--muted); margin:20px 0; line-height:1.9; }
+.concept-diagram { margin:30px 0; padding:28px; }
+.concept-diagram figcaption { font-weight:700; font-size:16px; }
+.concept-diagram ol { list-style:none; padding:0; display:flex; flex-wrap:wrap; gap:10px; margin:23px 0; }
+.concept-diagram li { flex:1 1 130px; border:1px solid var(--border); border-top:2px solid var(--accent); padding:18px 14px; background:var(--background); }
+.concept-diagram li b { display:block; font:11px var(--font-mono); color:var(--accent); margin-bottom:10px; }
+.concept-diagram li span { font-size:12px; line-height:1.8; }
+.concept-diagram p { color:var(--muted); font-size:12px; line-height:1.8; }
+.order-answer ol { list-style:decimal; padding-left:23px; margin:15px 0; }
+.order-answer li { display:flex; align-items:center; gap:10px; border:1px solid var(--border); padding:12px; margin:8px 0; cursor:grab; }
+.order-answer li span { flex:1; font-size:12px; line-height:1.7; }
+.order-answer button:disabled { opacity:.3; }
+.level-results { padding:28px; margin-top:26px; }
+.level-results h2 { font-size:20px; margin-bottom:15px; }
+.level-results > div { display:grid; grid-template-columns:1fr 1fr; gap:0 28px; }
+.level-results a { display:flex; align-items:center; gap:14px; padding:17px 0; border-bottom:1px solid var(--border-soft); }
+.level-results a > span:nth-child(2) { flex:1; }
+.level-results strong { display:block; font-size:12px; }
+.level-results small { display:block; color:var(--muted); margin-top:6px; font-size:11px; }
+.level-result-number { font:20px var(--font-mono); color:var(--accent); }
+.glossary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.glossary-entry { padding:25px; }
+.glossary-entry h2 { font-size:19px; margin:12px 0; }
+.glossary-entry p { color:var(--muted); font-size:13px; line-height:1.9; }
+.glossary-entry .text-link { margin-top:18px; font-size:11px; }
+.calculator-layout { display:grid; grid-template-columns:245px minmax(0,1fr); gap:24px; align-items:start; }
+.calculator-nav { padding:12px; display:flex; flex-direction:column; gap:3px; }
+.calculator-nav button { text-align:left; display:flex; align-items:center; gap:11px; border:0; border-radius:5px; background:none; color:var(--muted); padding:13px 11px; font:inherit; font-size:12px; cursor:pointer; }
+.calculator-nav button span { font:10px var(--font-mono); color:var(--subtle); }
+.calculator-nav button:hover,.calculator-nav button.selected { background:var(--panel-hover); color:var(--accent); }
+.calculator-workspace,.tool-panel,.mentor-search { padding:30px; margin-bottom:24px; }
+.calculator-workspace h2,.tool-panel h2,.mentor-search h2 { font-size:23px; margin:15px 0 20px; }
+.tool-panel h3 { font-size:15px; margin:25px 0 15px; }
+.tool-panel > p,.mentor-concept p,.mentor-results article > p { font-size:13px; line-height:1.9; color:var(--muted); margin:15px 0; }
+.formula { background:var(--background); border-left:3px solid var(--accent); padding:20px; font:12px/1.9 var(--font-mono); margin:24px 0; }
+.tool-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px; margin:22px 0; }
+.tool-fields label { display:flex; flex-direction:column; gap:9px; font-size:12px; color:var(--muted); }
+.tool-fields input,.tool-fields select,.tool-fields textarea { min-width:0; width:100%; color:var(--foreground); background:var(--background); border:1px solid var(--border); border-radius:5px; padding:12px; font:13px/1.5 var(--font-mono); }
+.tool-fields select option { color:var(--foreground); background:var(--background); }
+.tool-fields input:focus,.tool-fields select:focus,.tool-fields textarea:focus { outline:2px solid var(--accent); outline-offset:2px; }
+.tool-fields textarea { min-height:90px; resize:vertical; font-family:inherit; }
+.field-wide { grid-column:1/-1; }
+.tool-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:17px 0; }
+.tool-explanation { color:var(--muted); font-size:12px; line-height:1.9; margin:24px 0; }
+.calculation-results { border:1px solid var(--accent); border-radius:6px; padding:24px; margin:25px 0; background:color-mix(in srgb,var(--accent) 3%,transparent); }
+.calculation-results > div { padding:13px 0; border-bottom:1px solid var(--border-soft); }
+.calculation-results span { color:var(--muted); display:block; font-size:11px; }
+.calculation-results strong { font:27px var(--font-mono); display:block; margin:10px 0; overflow-wrap:anywhere; }
+.calculation-results small { margin-left:12px; font:11px var(--font-sans); color:var(--muted); }
+.calculation-results > p { color:var(--muted); font-size:11px; line-height:1.9; margin-top:15px; }
+.data-panel { margin-bottom:23px; padding:20px 25px; }
+.data-panel summary { cursor:pointer; font-size:12px; display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.data-panel > p { margin:15px 0; line-height:1.9; overflow-wrap:anywhere; }
+.data-panel code { font-size:11px; }
+.market-chart,.equity-chart { margin:20px 0; border:1px solid var(--border-soft); border-radius:6px; padding:15px; background:var(--background); }
+.market-chart svg,.equity-chart svg { display:block; width:100%; height:auto; }
+.market-chart figcaption,.equity-chart figcaption { font-size:10px; color:var(--muted); line-height:1.9; padding:5px 15px; }
+.table-scroll { width:100%; overflow:auto; }
+.data-table { width:100%; border-collapse:collapse; text-align:left; white-space:nowrap; font-size:12px; }
+.data-table th { color:var(--muted); font:10px var(--font-mono); padding:15px 12px; border-bottom:1px solid var(--border); }
+.data-table td { border-bottom:1px solid var(--border-soft); padding:14px 12px; }
+.data-table td small { display:block; color:var(--muted); font-size:10px; margin-top:6px; }
+.data-table .tool-actions { margin:0; gap:2px; }
+.data-table .button { padding:9px; font-size:10px; }
+.journal-errors { display:flex; flex-wrap:wrap; gap:13px 24px; border:1px solid var(--border); padding:20px; margin:25px 0; }
+.journal-errors legend { font-size:12px; padding:0 8px; }
+.journal-errors label { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; }
+.journal-image img { max-width:100%; max-height:350px; display:block; border:1px solid var(--border); border-radius:5px; }
+.journal-preview { font:14px var(--font-mono); color:var(--accent); }
+.tool-upload { display:flex; gap:15px; align-items:center; flex-wrap:wrap; color:var(--muted); font-size:12px; margin:22px 0; }
+.analytics-list { list-style:none; padding:0; margin:15px 0; }
+.analytics-list li { display:flex; justify-content:space-between; gap:15px; padding:16px 0; border-bottom:1px solid var(--border-soft); font-size:12px; }
+.analytics-list small { display:block; color:var(--muted); font-size:10px; margin-top:7px; }
+.analytics-list b { font:11px var(--font-mono); color:var(--accent); }
+.delete-confirmation { border:1px solid var(--warm); border-radius:5px; padding:12px; margin:12px 0; white-space:normal; max-width:300px; }
+.delete-confirmation p { margin-bottom:12px; color:var(--muted); font-size:11px; }
+.mentor-search .search-input { max-width:750px; width:100%; }
+.mentor-search .search-input input { width:100%; }
+.mentor-concept { margin:18px 0; padding:15px 0; border-bottom:1px solid var(--border-soft); }
+.mentor-concept h3 { color:var(--accent); font-size:15px; }
+.mentor-results .takeaway { margin:24px 0; }
+.lesson-text-section > p { font-size:15px; line-height:1.95; }
+.lesson-article { overflow-wrap:break-word; }
+@media(max-width:1050px) { .calculator-layout { grid-template-columns:1fr; } .calculator-nav { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); } .calculator-nav button { font-size:10px; padding:10px; } }
+@media(max-width:650px) { .tool-fields { grid-template-columns:1fr; } .calculator-nav { grid-template-columns:repeat(2,minmax(0,1fr)); } .calculator-workspace,.tool-panel,.mentor-search { padding:22px 18px; } .data-panel { padding:18px; } .market-chart { padding:5px; } .tool-actions .button { font-size:11px; } .calculation-results strong { font-size:23px; } }
+@media(max-width:650px) { .level-results > div,.glossary-grid { grid-template-columns:1fr; } .locked-unit { padding:25px; } .concept-diagram { padding:20px; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation:none!important; transition:none!important; } }
