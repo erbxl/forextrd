@@ -1,5 +1,7 @@
 # Auditoría y plan de migración a GitHub Pages
 
+Documento histórico de la migración 0.2.0. La academia y herramientas ampliadas de 0.3.0 se describen en README.md y ROADMAP.md.
+
 Fecha: 11 de octubre de 2026. Base inspeccionada: commit `53f29e6` y cambio local de Next en `next-env.d.ts`.
 
 ## Auditoría previa

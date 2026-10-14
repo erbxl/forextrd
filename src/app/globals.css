@@ -564,3 +564,9 @@ ul,ol { padding-left:22px; }
 @media(max-width:650px) { .tool-fields { grid-template-columns:1fr; } .calculator-nav { grid-template-columns:repeat(2,minmax(0,1fr)); } .calculator-workspace,.tool-panel,.mentor-search { padding:22px 18px; } .data-panel { padding:18px; } .market-chart { padding:5px; } .tool-actions .button { font-size:11px; } .calculation-results strong { font-size:23px; } }
 @media(max-width:650px) { .level-results > div,.glossary-grid { grid-template-columns:1fr; } .locked-unit { padding:25px; } .concept-diagram { padding:20px; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation:none!important; transition:none!important; } }
+
+.trading-layout { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr); gap:22px; align-items:start; }
+.trading-layout .tool-panel { min-width:0; }
+.tool-panel summary { cursor:pointer; font-size:13px; line-height:1.8; }
+.tool-panel li { margin:10px 0; line-height:1.8; }
+@media(max-width:1200px) { .trading-layout { grid-template-columns:1fr; } }

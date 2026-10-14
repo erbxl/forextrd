@@ -10,7 +10,8 @@ describe("cálculos financieros con unidades de referencia",()=>{
   it("calcula esperanza, equilibrio y costes ida y vuelta",()=>{expect(expectancy(40,2,1,.1)).toBeCloseTo(.1);expect(breakEven(2,1,.1)).toBeCloseTo(36.66666667);expect(tradingCosts(1,.2,1,.35,.2,2)).toBeCloseTo(2.5);expect(tradingCosts(1,0,1,0,-.2,2)).toBeCloseTo(.6);});
   it("rechaza división por cero y valores no finitos",()=>{expect(()=>pipDistance(1,2,0)).toThrow();expect(()=>margin(Infinity,30)).toThrow();expect(()=>positionSize(10000,101,25,10)).toThrow();expect(()=>pipValue(100,.0001,0)).toThrow();expect(()=>tradingCosts(1,0,1,0,0,.5)).toThrow();});
   it("Monte Carlo es reproducible, conserva la muestra y nunca crea capital negativo",()=>{const sample=[-1,2,-1,1.5];const a=monteCarlo(sample,10000,1,100,100,42);expect(monteCarlo(sample,10000,1,100,100,42)).toEqual(a);expect(a.p05).toBeLessThanOrEqual(a.median);expect(a.median).toBeLessThanOrEqual(a.p95);expect(sample).toEqual([-1,2,-1,1.5]);const ruin=monteCarlo([-1,-1],100,100,10,5,1);expect(ruin.median).toBe(0);expect(ruin.depletedPercent).toBe(100);expect(ruin.drawdown95).toBe(100);});
-  it("no acepta simulaciones con parámetros ilimitados o vacíos",()=>{expect(()=>monteCarlo([],100,1)).toThrow();expect(()=>monteCarlo([1,2],100,1,100000)).toThrow();expect(()=>monteCarlo([1,NaN],100,1)).toThrow();});
+  it("no acepta simulaciones con parámetros ilimitados o vacíos",()=>{expect(()=>monteCarlo([],100,1)).toThrow();expect(()=>monteCarlo([1,2],100,1,100000)).toThrow();expect(()=>monteCarlo([1,NaN],100,1)).toThrow();expect(()=>monteCarlo([100,100],100,100,1000,1)).toThrow("rango numérico");});
+  it("permite medir pérdidas superiores al capital cuando la equity es negativa",()=>{expect(drawdown(1000,-250)).toBe(125);});
 });
 
 describe("datos de mercado explícitos y verificables",()=>{

@@ -1,5 +1,17 @@
 # Historial de cambios
 
+## 0.3.0 — Academia y laboratorio local · 14 de octubre de 2026
+
+- Programa de 104 lecciones, 449 preguntas, 104 ejemplos, 13 exámenes y glosario de 90 términos.
+- Desbloqueo de niveles mediante las ocho lecciones y su examen, con conservación del progreso anterior.
+- Preguntas textuales, ordenación y gráficos accesibles; práctica numérica adaptativa reproducible.
+- 14 calculadoras, Monte Carlo, datos simulados y CSV validado.
+- Simulador y replay con órdenes, costes, margen, sesiones y diario; backtesting SMA/canal con muestras separadas.
+- Diario con analítica de disciplina y tutor local del currículo.
+- Esquema IndexedDB 3 y copias versión 2 compatibles con copias versión 1.
+- Validación actual y límites en TESTING.md. Ampliación local, sin nueva publicación en esta entrega.
+
+
 ## 0.2.0 — Migración estática de la Fase 1
 
 ### Cambios
@@ -40,6 +52,6 @@ Primera entrega con Next.js, React, TypeScript y persistencia de servidor median
 
 La versión 0.2.0 sustituye ese almacenamiento y su ejecución habitual. Las instrucciones antiguas de inicialización de base de datos ya no se aplican.
 
-## Próxima fase
+## Evolución
 
-Fase 2: ampliar material educativo completo, modalidades, evaluaciones y repaso, según [ROADMAP.md](ROADMAP.md).
+Las integraciones y mejoras posteriores se detallan en [ROADMAP.md](ROADMAP.md).

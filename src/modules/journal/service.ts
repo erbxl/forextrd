@@ -7,7 +7,7 @@ const price=amount.positive();
 const note=z.string().trim().max(3000);
 export const journalSchema=z.object({
   openedAt:z.string().datetime(),closedAt:z.string().datetime(),pair:z.string().regex(/^[A-Z]{3}\/[A-Z]{3}$/),direction:z.enum(["buy","sell"]),
-  entry:price,exit:price,stop:price,target:price,units:price,quoteToAccount:price,costs:amount,
+  entry:price,exit:price,stop:price,target:price,units:price,quoteToAccount:price,costs:z.number().finite().min(-1e12).max(1e12),initialRisk:price.optional(),
   strategy:z.string().trim().min(1).max(100),entryReason:note,exitReason:note,emotionBefore:note,emotionAfter:note,errors:z.array(z.string().max(100)).max(10),notes:note,followedPlan:z.boolean(),
   image:z.string().max(500000).regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/).optional(),
 }).strict().superRefine((entry,ctx)=>{
@@ -16,7 +16,7 @@ export const journalSchema=z.object({
 });
 export type JournalEntry=z.infer<typeof journalSchema>;
 export type SavedJournalEntry=JournalEntry & {id:string;createdAt:string;updatedAt:string};
-export function tradeResult(entry:JournalEntry) {const sign=entry.direction==="buy" ? 1 : -1;const gross=(entry.exit-entry.entry)*sign*entry.units*entry.quoteToAccount;const net=gross-entry.costs;const risk=Math.abs(entry.entry-entry.stop)*entry.units*entry.quoteToAccount+entry.costs;return {gross,net,risk,r:net/risk};}
+export function tradeResult(entry:JournalEntry) {const sign=entry.direction==="buy" ? 1 : -1;const gross=(entry.exit-entry.entry)*sign*entry.units*entry.quoteToAccount;const net=gross-entry.costs;const risk=entry.initialRisk ?? Math.abs(entry.entry-entry.stop)*entry.units*entry.quoteToAccount;return {gross,net,risk,r:net/risk};}
 export async function saveJournalEntry(value:unknown,id?:string,client:AcademyDatabase=getDatabase()):Promise<SavedJournalEntry> {
   const parsed=journalSchema.safeParse(value);if(!parsed.success)throw new Error(parsed.error.issues.map(issue=>issue.message).join(" "));
   const existing=id ? await client.journalEntries.get(id) : undefined;if(id&&!existing)throw new Error("Esta entrada ya no existe. Recarga el diario.");

@@ -148,7 +148,7 @@ test("exporta, restablece y restaura una copia solo después de previsualizar y 
   const backupPath = testInfo.outputPath("academy-backup.json");
   await download.saveAs(backupPath);
   const backup = JSON.parse(await readFile(backupPath, "utf8"));
-  expect(backup).toMatchObject({ format: "forex-academy-pro", version: 1 });
+  expect(backup).toMatchObject({ format: "forex-academy-pro", version: 2 });
   expect(backup.tables.profile[0].name).toBe("Perfil de copia");
   expect(backup.tables.attempts).toHaveLength(1);
 

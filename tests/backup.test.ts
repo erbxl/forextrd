@@ -5,7 +5,7 @@ import { firstLesson } from "../src/modules/academy/content";
 import { evaluateAnswers } from "../src/modules/exercises/evaluate";
 import {
   MAX_BACKUP_BYTES, backupPreview, exportBackup, parseBackup, resetDatabase, restoreBackup,
-  type BackupEnvelope,
+  type BackupEnvelope, type LegacyBackupEnvelope,
 } from "../src/modules/storage/backup";
 import { AcademyDatabase, SCHEMA_V1, initializeDatabase } from "../src/modules/storage/db";
 import { TABLE_NAMES, type ReservedRecord } from "../src/modules/storage/types";
@@ -32,7 +32,7 @@ function reserved(id: string): ReservedRecord {
     metadata: { source: "synthetic", note: "Registro reservado, no operación ejecutada", nested: { valid: true, units: 2 }, tags: ["demo", null] },
   };
 }
-function fixture(): BackupEnvelope {
+function fixture(): LegacyBackupEnvelope {
   const wrong = { ...answers(), "poder-adquisitivo": 950 };
   const correct = answers();
   return {
@@ -78,7 +78,7 @@ describe("portable backups", () => {
     const restored = await exportBackup(other);
     expect(restored.tables).toEqual(exported.tables);
     expect(restored.tables).toEqual(original.tables);
-    for (const table of TABLE_NAMES) expect(restored.tables[table].length).toBeGreaterThan(0);
+    for (const table of TABLE_NAMES) { if (table === "practiceAttempts") expect(restored.tables[table]).toEqual([]); else expect(restored.tables[table].length).toBeGreaterThan(0); }
     expect(restored.tables.preferences[0].theme).toBe("light");
     expect(restored.tables.journalEntries[0].metadata.nested).toEqual({ valid: true, units: 2 });
   });
@@ -86,7 +86,7 @@ describe("portable backups", () => {
   it("provides concrete preview counts without mutating the current profile", async () => {
     expect(backupPreview(parsedFixture())).toEqual({
       profileName: "Lucía", exportedAt: "2026-10-11T11:00:00.000Z", lessonsRead: 1,
-      lessonsCompleted: 1, attempts: 2, studySeconds: 60, theme: "light", demoTrades: 1,
+      lessonsCompleted: 1, attempts: 2, practiceAttempts: 0, studySeconds: 60, theme: "light", demoTrades: 1,
       replaySessions: 1, backtestResults: 1, journalEntries: 1, totalRecords: 12,
     });
     expect((await database.profile.get("local-student"))?.name).toBe("Estudiante");
@@ -204,14 +204,14 @@ describe("backup validation and derivation", () => {
   it.each(corruptions)("rejects %s without changing any existing table", async (_label, corrupt) => {
     await database.journalEntries.add(reserved("keep-me"));
     const before = (await exportBackup(database)).tables;
-    const source = fixture();
+    const source = parsedFixture();
     corrupt(source);
     await expect(restoreBackup(source, database)).rejects.toThrow();
     expect((await exportBackup(database)).tables).toEqual(before);
   });
 
   it("rejects future format versions without modifying data", async () => {
-    const source = { ...fixture(), version: 2 };
+    const source = { ...fixture(), version: 99 };
     const before = (await exportBackup(database)).tables;
     expect(() => parseBackup(JSON.stringify(source))).toThrow(/versión/);
     await expect(restoreBackup(source as unknown as BackupEnvelope, database)).rejects.toThrow(/versión/);
@@ -240,7 +240,7 @@ describe("backup validation and derivation", () => {
       nested = next;
     }
     expect(() => parseBackup(JSON.stringify(source))).toThrow(/anidados/);
-    const cycle = fixture();
+    const cycle = parsedFixture();
     cycle.tables.journalEntries[0].metadata.self = cycle.tables.journalEntries[0].metadata;
     await expect(restoreBackup(cycle, database)).rejects.toThrow(/circulares/);
   });
@@ -255,7 +255,7 @@ describe("backup validation and derivation", () => {
 });
 
 describe("schema upgrades and portable backup version", () => {
-  it("preserves a v1 local database through the additive v2 migration and export", async () => {
+  it("preserves a v1 local database through the additive v2/v3 migrations and export", async () => {
     const name = databaseName();
     const legacy = new Dexie(name);
     databases.push(legacy);
@@ -269,10 +269,10 @@ describe("schema upgrades and portable backup version", () => {
     const upgraded = new AcademyDatabase(name);
     databases.push(upgraded);
     await initializeDatabase(upgraded);
-    expect(upgraded.verno).toBe(2);
+    expect(upgraded.verno).toBe(3);
     expect(await upgraded.reviewConcepts.toArray()).toEqual(source.tables.reviewConcepts);
     const portable = await exportBackup(upgraded);
-    expect(portable.version).toBe(1);
+    expect(portable.version).toBe(2);
     expect(portable.tables.profile[0].name).toBe("Lucía");
     expect(portable.tables.journalEntries).toEqual(source.tables.journalEntries);
     await restoreBackup(portable, database);

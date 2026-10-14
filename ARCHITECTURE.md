@@ -1,59 +1,47 @@
-# Arquitectura — Forex Academy Pro
+# Arquitectura
 
-## Decisión de esta versión
+Next.js con App Router genera `out/` mediante exportación estática. Las 117 unidades de aprendizaje y las herramientas tienen rutas enumeradas; GitHub Pages sirve HTML, JS, CSS y fuentes bajo `/forextrd/`. Node se utiliza para desarrollar, compilar y probar. No hay API Routes, Server Actions, Prisma ni base remota en ejecución.
 
-Next.js 16 con App Router y React 19 se conserva como generador estático. `output: "export"` produce `out/`, `basePath: "/forextrd"` adapta enlaces y recursos, y `trailingSlash: true` genera páginas de directorio. Las rutas de lecciones y secciones futuras se enumeran mediante `generateStaticParams`. Los componentes de servidor que quedan solo producen contenido en compilación; no existe un servidor Next.js en producción.
+## Módulos
 
-La aplicación principal no requiere Node.js, API Routes, Server Actions, Prisma, SQLite, Docker ni una base remota. Node se utiliza para desarrollo, pruebas y build. GitHub Pages sirve HTML, JavaScript, CSS, fuentes y otros recursos estáticos.
-
-## Separación de responsabilidades
-
-| Capa | Responsabilidad |
+| Módulo | Responsabilidad |
 | --- | --- |
-| `src/modules/academy` | Currículo, textos de lecciones, definiciones de ejercicios y soluciones en archivos separados. |
-| `src/modules/exercises` | Evaluación TypeScript determinista: validación, puntuación y explicación. |
-| `src/modules/progress` | Registro de intentos, finalización, lectura, actividad y consultas agregadas. |
-| Persistencia Dexie/IndexedDB | Tablas locales, versiones de esquema y transacciones. |
-| Servicios de copia JSON | Exportación versionada, validación, previsualización y restauración atómica. |
-| Componentes cliente | Interacciones y estado observable, con carga y errores explícitos. |
-| `out/` | Único artefacto publicable; nunca contiene la base personal del navegador. |
+| academy | 104 lecciones, 13 exámenes, glosario, fuentes y requisitos entre niveles. |
+| exercises | Corrección de cinco modalidades y generadores reproducibles de práctica. |
+| progress | Lectura, intentos, finalización, actividad y estadísticas. |
+| risk | Funciones matemáticas con validación y Monte Carlo con semilla. |
+| market-data | Contrato OHLC, validación CSV, procedencia y series simuladas deterministas. |
+| simulator | Motor puro de órdenes, costes, financiación, margen, stop-out y curva. |
+| backtesting | Señales causales SMA/canal, dimensionamiento y muestras independientes. |
+| trading-sessions | Validación y persistencia de sesiones, cursor y anotaciones. |
+| journal | Validación, CRUD, resultados netos, riesgo inicial y analítica. |
+| ai-mentor | Búsqueda determinista sobre material escrito y glosario; no usa un LLM. |
+| storage | Dexie, migraciones, preferencias y copias de seguridad. |
 
-El catálogo estático se combina para mantener el contrato educativo existente. Separar soluciones de preguntas facilita su mantenimiento, pero no las oculta al usuario: ambas forman parte de los recursos descargables.
+Los componentes observan IndexedDB con consultas de solo lectura. La inicialización idempotente se hace fuera de `liveQuery`. Los motores de cálculo están separados de los formularios y no usan precios externos implícitos.
 
-## Flujo de aprendizaje
+## Progreso
 
-Interfaz → motor de evaluación en navegador → transacción IndexedDB → actualización observable → dashboard y repaso.
+Cada unidad requiere ≥80 %, preguntas obligatorias correctas y lectura confirmada. Una transacción verifica también los requisitos del nivel: ocho lecciones completadas para abrir su examen y examen completado para abrir el siguiente nivel. Repetir no elimina competencias ya demostradas. El porcentaje de lecciones usa 104 como denominador; los 13 exámenes se reflejan en niveles completados.
 
-Una evaluación se aprueba con al menos un 80 % y el cálculo obligatorio correcto. Completar exige una evaluación aprobada previa y confirmación de lectura. Repetir no duplica la lección completada ni borra una competencia aprobada. El dashboard consulta registros reales; un perfil nuevo comienza en cero.
+Actividad y objetivo semanal utilizan Europe/Madrid. La lectura cuenta solo intervalos de pestaña visible y enfocada; no acredita tiempo certificado. La práctica adaptativa lleva una secuencia por familia, sube tras tres aciertos y baja tras dos errores; no desbloquea exámenes por sí sola.
 
-La actividad utiliza `Europe/Madrid`: el objetivo semanal cuenta días de lunes a domingo y el gráfico muestra los últimos siete días. La lectura activa es una ayuda local y no una acreditación de estudio. Los conceptos de repaso se derivan de errores históricos, incluso si hubo aciertos posteriores. El progreso porcentual mide lo publicado, no el currículo futuro.
+## Ejecución y datos
 
-## Persistencia y evolución
+CSV: fechas UTC ordenadas y únicas, OHLC positivo coherente e intervalos múltiplos del marco declarado. No se rellenan gaps ni se verifica externamente la fuente. Límite de 5000 velas/2 MiB. Las velas son mid; spread, deslizamiento y conversión son supuestos explícitos.
 
-Dexie administra IndexedDB con esquema versionado e inicialización idempotente. Los datos personales incluyen perfil, preferencias, resultados, respuestas, progreso y sesiones de estudio. Las tablas reservadas para operaciones demo, replay, backtesting y diario permiten evolucionar el almacenamiento; no representan funcionalidades ya implementadas.
+Órdenes al cierre se evalúan desde la siguiente vela. Mercado y cierre manual se ejecutan en su apertura. Límites no empeoran su precio; stops pueden atravesarse por gaps. El recorrido intravela es supuesto y conservador: SL/TP ambiguos priorizan SL, salvo una apertura ya ejecutable. El margen se fija al entrar; el stop-out liquida primero la mayor pérdida. Financiación por tiempo UTC transcurrido, sin calendario real de swaps. Un gap puede producir saldo negativo.
 
-Las próximas versiones deben añadir migraciones explícitas que conserven registros existentes. Actualizar el catálogo o el sitio no debe borrar la base. No se emplea borrar y recrear IndexedDB como mecanismo de actualización.
+El backtest calcula total, entrenamiento y prueba con cuentas independientes. Usa exclusivamente información anterior o actual para señales y calentamiento; liquida posiciones al final de cada intervalo con costes. No optimiza parámetros. La interfaz ejecuta el cálculo en un Web Worker cancelable, que se termina al salir de la página. El Sharpe usa retornos simples, desviación muestral, tipo libre de riesgo cero y anualización de 365 días por espaciado observado. El drawdown incluye extremos del recorrido supuesto, no solo cierres.
 
-Los datos se aíslan por origen y perfil de navegador, no por cuenta GitHub. La ruta `/forextrd/` no es una frontera de seguridad entre aplicaciones del mismo origen. No hay sincronización entre dispositivos ni autenticación compartida.
+## Persistencia y copias
 
-## Copias de seguridad
+Esquema local 1: perfil, preferencias, progreso, intentos, lectura, actividad y tablas de herramientas. Versión 2: índice de conceptos a repasar. Versión 3: intentos de práctica con índice único familia/secuencia. Las migraciones son aditivas y conservan registros anteriores.
 
-La exportación JSON identifica formato y versión e incluye los datos personales y preferencias. Importar implica validar tamaño, estructura, versión, identificadores y relaciones antes de mostrar el alcance. La confirmación autoriza una sustitución completa dentro de una transacción; un fallo revierte el conjunto. El restablecimiento también requiere una acción explícita.
+Las copias JSON versión 2 incluyen todas las tablas. Se acepta versión 1 añadiendo práctica vacía. Antes de restaurar se validan límites, fechas, relaciones, requisitos y claves; se recalculan calificaciones y estadísticas derivadas. Las sesiones de trading se validan también al abrirse; los experimentos recuperan datos/parámetros y recalculan resultados. La restauración sustituye tablas en una única transacción tras confirmación. Límite del archivo: 10 MiB.
 
-Una copia no es una firma de autenticidad ni un cifrado. Las validaciones evitan corrupción accidental y estados incompatibles; un usuario con acceso al navegador puede manipular su estado. No hay evaluación certificada a prueba de fraude.
+Datos por origen y perfil del navegador. Sin autenticación ni sincronización; la ruta no separa aplicaciones del mismo origen. Las copias no están firmadas ni cifradas y las soluciones del frontend son inspeccionables. Los registros antiguos reservados se conservan, aunque no constituyen sesiones válidas hasta tener un formato reconocido.
 
-El archivo anterior `prisma/dev.db` permanece intacto y excluido de Git. En la verificación final de solo lectura contiene un perfil y ningún intento, registro de progreso, sesión o actividad de estudio. El perfil y las preferencias de SQLite no se convierten automáticamente. Si otra instalación tiene progreso anterior, hay que conservar su archivo: no se importa automáticamente ni debe borrarse al actualizar. El formato SQLite no es el JSON de copia de IndexedDB.
+## Hosting e integraciones
 
-## Hosting, seguridad e integraciones
-
-El workflow compila con Node 22 y sube solo `out/`; el trabajo de despliegue obtiene `pages: write` e `id-token: write`. El trabajo de build solo necesita lectura del repositorio y de la configuración de Pages.
-
-Se elimina la dependencia de `headers()` y del proxy de Next. Pages decide las cabeceras HTTP del sitio; las etiquetas meta admitidas no equivalen a controles como HSTS o protección completa contra framing. No se ofrece un endpoint privado, una sesión autenticada ni un lugar seguro para almacenar claves API.
-
-La academia básica no usa IA externa, datos de mercado ni brokers. Una fuente futura necesita contrato desacoplado, licencia compatible y acceso CORS permitido. Un secreto incluido en JavaScript, una variable pública o el artefacto estático es visible. Cualquier servicio externo opcional deberá resolver esa limitación sin convertir la academia básica en dependiente de él.
-
-## Fases futuras en el navegador
-
-Cálculos, simulación, replay y backtesting se diseñarán como funciones puras y reproducibles. Las cargas costosas podrán ejecutarse en Web Workers; no se añade un servidor para cálculos que pueden hacerse localmente. Los datos CSV necesitarán validación, importación por bloques, índices y paginación, teniendo en cuenta cuota de IndexedDB y memoria disponible.
-
-Esta migración mantiene el alcance de Fase 1. [ROADMAP.md](ROADMAP.md) conserva las siete fases; no se implementa aún el laboratorio financiero.
+El workflow existente publica solo `out/` y concede permisos Pages al trabajo de despliegue. No hay lugar seguro para claves privadas en JavaScript. Proveedores, IA externa y sincronización requieren servicios opcionales separados. No hay ejecución real, feed de mercado ni calendario sincronizado. La migración histórica desde SQLite se documenta en MIGRATION.md; no se borran ni convierten automáticamente sus archivos.

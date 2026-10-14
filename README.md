@@ -1,34 +1,42 @@
 # Forex Academy Pro
 
-Academia de Forex en español con Next.js, React y TypeScript, exportada como **sitio estático para GitHub Pages**. La Fase 1 conserva su diseño, una primera unidad educativa completa, ejercicios, dashboard y progreso. La corrección y la persistencia se ejecutan en el navegador, sin un servidor de aplicación.
+Academia de Forex en español con 13 niveles, 104 lecciones, 449 preguntas de lección y 13 exámenes. Incluye práctica numérica, calculadoras, simulador, replay, backtesting, diario y tutor de consulta del temario. Next.js genera un sitio estático para GitHub Pages; los cálculos y los datos personales permanecen en el navegador.
 
-Sitio publicado: [erbxl.github.io/forextrd/](https://erbxl.github.io/forextrd/). El 12 de octubre de 2026 se verificaron el despliegue y las cinco pruebas funcionales de navegador directamente sobre GitHub Pages. Evidencia y entorno en [TESTING.md](TESTING.md).
+Esta ampliación está implementada en el repositorio local. La dirección de publicación es [erbxl.github.io/forextrd/](https://erbxl.github.io/forextrd/); el estado de esta entrega y sus pruebas se documenta en [TESTING.md](TESTING.md). No se ha publicado esta ampliación durante su desarrollo.
 
-## Qué está disponible
+## Aprender y desbloquear niveles
 
-- Navegación lateral responsive, modo oscuro y claro, dashboard y perfil local.
-- Currículo de 13 niveles: nivel 0 parcialmente publicado y resto del contenido pendiente.
-- Lección «Dinero, precios y poder adquisitivo», con explicaciones, ejemplos didácticos, recurso visual y fuentes oficiales del BCE.
-- Cinco preguntas corregibles y repetibles, explicaciones y conservación de intentos.
-- Aprobación con al menos un 80 % y cálculo numérico obligatorio correcto; completar exige además confirmar la lectura.
-- Progreso, conceptos para repasar, lectura activa y objetivo semanal de días de estudio.
-- Datos locales en IndexedDB mediante Dexie; exportación e importación JSON con validación, previsualización y confirmación.
-- Restablecimiento de datos con confirmación explícita.
+Cada nivel tiene ocho lecciones y un examen. El nivel 0 está disponible desde el inicio. Para completar una unidad necesitas al menos un 80 %, todas las preguntas obligatorias correctas y confirmar la lectura. Completar sus ocho lecciones abre el examen; completarlo desbloquea el siguiente nivel. El progreso anterior de la primera lección se conserva.
 
-El 100 % de lecciones publicadas **no equivale a completar el nivel 0 ni los 13 niveles**. Las herramientas futuras muestran su estado pendiente; no inventan resultados ni datos de mercado.
+- 104 ejemplos resueltos, diagramas, fuentes y explicaciones de los errores.
+- Preguntas de selección, verdadero/falso, cálculo, respuesta textual y ordenación; algunas incluyen velas con tabla accesible.
+- 13 exámenes de 16 preguntas: reutilizan 208 selecciones del banco de lecciones, sin inflar el número de preguntas originales.
+- Glosario de 90 términos, biblioteca de fuentes, repaso de errores, plan semanal y seguimiento de lectura.
+- Práctica reproducible de pips, posición y expectativa con tres dificultades adaptativas y registro de intentos.
 
-## Desarrollo local
+## Laboratorio disponible
 
-Se recomienda Node.js 22, también utilizado por GitHub Actions. El mínimo declarado es Node.js 20.17 y npm 10. Desde la raíz:
+| Herramienta | Funciones |
+| --- | --- |
+| Calculadoras | 14 herramientas: pips, valor por pip, lotes, posición, margen, apalancamiento, riesgo por operación, riesgo/beneficio, drawdown, recuperación, expectativa, equilibrio, costes y Monte Carlo. |
+| Simulador | Saldo virtual, órdenes mercado/límite/stop, SL/TP, cierres manuales, margen, stop-out, spread, deslizamiento, comisiones y financiación. Historial, curva, CSV y sesiones guardadas. |
+| Replay | Avance por vela, reproducción/pausa, fecha inicial, futuro oculto en el gráfico, soportes/resistencias y recuperación de sesiones. |
+| Backtesting | Cruce SMA y ruptura de canal parametrizables, riesgo, costes, intervalo, entrenamiento/prueba separados, métricas, curvas, JSON/CSV y experimentos guardados. |
+| Diario | Crear, editar y eliminar registros; motivos, emociones, reglas, errores, captura, resultado neto, múltiplos R y analítica por estrategia y hora UTC. |
+| Mentor | Consulta local de explicaciones y fuentes del currículo, modo técnico y revisión de errores; no conecta con un modelo de IA. |
+
+Los precios incluidos son simulados y están etiquetados. Puedes importar CSV propios con fuente declarada: 2–5000 velas, hasta 2 MiB. El motor interpreta OHLC como precio medio. No hay cotizaciones en directo, broker ni órdenes reales. Las ambigüedades intravela, la conversión fija y el modelo de financiación se explican en las herramientas.
+
+## Ejecutar y comprobar
+
+Node.js 22 recomendado (mínimo declarado 20.17, npm 10):
 
 ```powershell
 npm ci
 npm run dev
 ```
 
-Abre [http://127.0.0.1:3000/forextrd/](http://127.0.0.1:3000/forextrd/). No necesitas `.env`, claves API, migraciones de servidor ni inicializar una base de datos manualmente. La primera visita crea el perfil local.
-
-## Compilación y prueba del sitio estático
+Desarrollo: http://127.0.0.1:3000/forextrd/. No necesitas claves API ni una base de datos de servidor.
 
 ```powershell
 npm run typecheck
@@ -37,45 +45,20 @@ npm run build
 npm run preview
 ```
 
-El build genera `out/`. La previsualización sirve exclusivamente esos archivos en [http://127.0.0.1:3100/forextrd/](http://127.0.0.1:3100/forextrd/), sin Next.js en ejecución. `npm start` es un alias de esta previsualización. No abras `out/index.html` mediante `file://`.
+La previsualización sirve el último artefacto de `out/` en http://127.0.0.1:3100/forextrd/. Detén la previsualización manual antes de ejecutar `npm run test:e2e`; Playwright inicia su propio servidor. Si falta Chromium, instala la revisión requerida con `npx playwright install chromium`.
 
-Para las pruebas de navegador, detén la previsualización manual y ejecuta:
+## Datos y copias
 
-```powershell
-npx playwright install chromium
-npm run test:e2e
-```
+IndexedDB pertenece a cada origen, navegador y perfil. GitHub no sincroniza tus datos. Ajustes permite exportar una copia JSON, previsualizar una importación y confirmar su sustitución atómica. Las copias actuales usan versión 2 y aceptan copias de versión 1; la migración local a esquema 3 conserva el historial existente. Las sesiones de trading se conservan al pulsar Guardar. El diario y los ejercicios se guardan al confirmar cada registro.
 
-La instalación del navegador solo es necesaria cuando falta la revisión de Chromium requerida. Playwright inicia su propio servidor de archivos y cada prueba dispone de un contexto de navegador nuevo. Consulta el alcance y resultados en [TESTING.md](TESTING.md).
+Las copias contienen datos personales sin cifrar: guárdalas fuera del repositorio. Borrar los datos del sitio, cambiar de dispositivo o usar otro puerto puede mostrar un perfil vacío. La exportación tiene un límite de 10 MiB; exporta los CSV o JSON de sesiones y experimentos también para conservar resultados individuales.
 
-Verificación completada: TypeScript, **107 pruebas unitarias y de integración**, compilación estática y **5 pruebas de navegador tanto en local como en el sitio publicado**. Incluye navegación, evaluación, persistencia, preferencias y exportación/restauración de copias.
+## Publicación y límites
 
-## Publicación en GitHub Pages
+El workflow existente de GitHub Actions comprueba tipos, tests y build, y publica exclusivamente `out/` al enviar cambios a `main`. Configuración de Pages: **Settings → Pages → Source: GitHub Actions**. Se mantiene `basePath: /forextrd` y cada ruta genera su propio HTML.
 
-Este repositorio ya utiliza GitHub Actions para Pages. Para configurar otra instalación selecciona **Settings → Pages → Build and deployment → Source: GitHub Actions**. El workflow de `.github/workflows/deploy.yml` se ejecuta tras un push a `main` o manualmente: instala con `npm ci`, comprueba tipos, ejecuta tests, compila y publica únicamente `out/` mediante las acciones oficiales. La publicación manual también se limita a `main`. [Documentación oficial de GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
-
-La configuración fija `basePath: "/forextrd"` y `trailingSlash: true`. Las rutas profundas generan su propio `index.html`; no dependen de redirigir cualquier 404 a la portada.
-
-## Tus datos y copias
-
-IndexedDB guarda los datos en el navegador, perfil y origen utilizados. **GitHub no sincroniza tu progreso**. Otro dispositivo, otro navegador, una ventana privada o cambiar entre desarrollo, previsualización y Pages pueden mostrar perfiles distintos. Borrar los datos del sitio puede eliminar el historial.
-
-En Ajustes, exporta una copia JSON y consérvala fuera del repositorio. Para trasladarla, impórtala en el navegador de destino, revisa la previsualización y confirma la sustitución. La restauración es atómica: un archivo inválido no debe aplicar cambios parciales. El JSON contiene datos personales y no está cifrado. Conserva una copia antes de restablecer o sustituir datos.
-
-## Límites actuales
-
-Las soluciones incluidas en el frontend son inspeccionables. Esta aplicación sirve para autoaprendizaje y no ofrece certificación resistente a manipulación. El contenido se mantiene funcional sin servicios externos; todos los ejemplos numéricos son sintéticos y educativos, no cotizaciones ni rentabilidades históricas.
-
-GitHub Pages no ejecuta APIs de aplicación ni protege claves privadas. No incluyas secretos en el código, `NEXT_PUBLIC_*` o el artefacto publicado. Las etiquetas meta no sustituyen todas las cabeceras HTTP que un servidor propio podría establecer. No hay autenticación, sincronización, brokers, operaciones reales ni garantías de rentabilidad.
-
-Las calculadoras, gráficos de mercado, importación de históricos, simulador, replay, backtesting, diario y tutor IA pertenecen a fases posteriores. Las futuras fuentes externas deberán permitir CORS y uso conforme a su licencia. No se garantiza funcionamiento sin conexión; esta entrega no incorpora una caché offline completa.
+La aplicación es de autoaprendizaje: respuestas y estado local son inspeccionables. No ofrece certificación protegida, autenticación, sincronización entre dispositivos ni caché offline completa. El mentor no es un LLM. Los calendarios enlazan a organismos oficiales; no hay calendario sincronizado, consenso de mercado ni noticias integradas. Las simulaciones no reconstruyen ticks ni garantizan resultados futuros. Cualquier integración con secretos necesita un servicio externo; no se deben incluir claves privadas en el sitio estático.
 
 ## Documentación
 
-- [ARCHITECTURE.md](ARCHITECTURE.md): arquitectura estática, persistencia y límites.
-- [MIGRATION.md](MIGRATION.md): auditoría y decisiones de migración.
-- [DEVELOPMENT.md](DEVELOPMENT.md): desarrollo y publicación.
-- [CURRICULUM.md](CURRICULUM.md): programa educativo y contenido publicado.
-- [ROADMAP.md](ROADMAP.md): fases y criterios de aceptación.
-- [TESTING.md](TESTING.md): verificaciones de la entrega.
-- [CHANGELOG.md](CHANGELOG.md): historial de cambios.
+[Programa](CURRICULUM.md) · [Arquitectura](ARCHITECTURE.md) · [Desarrollo](DEVELOPMENT.md) · [Estado y siguientes mejoras](ROADMAP.md) · [Pruebas](TESTING.md) · [Historial](CHANGELOG.md) · [Migración original](MIGRATION.md)

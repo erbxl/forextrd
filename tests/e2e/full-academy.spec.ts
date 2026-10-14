@@ -39,7 +39,7 @@ test("calculadoras explican resultados y rechazan stops invertidos",async({page}
 
 test("diario guarda, edita y conserva una pérdida con plan respetado",async({page})=>{
   await page.goto("diario/");await page.getByLabel("Estrategia",{exact:true}).fill("Plan E2E");await page.getByLabel("Precio de salida",{exact:true}).fill("1.078");await page.getByLabel("Seguí todas las reglas de mi plan.").check();await page.getByRole("button",{name:"Guardar operación",exact:true}).click();await expect(page.getByText("Entrada guardada en tu diario.",{exact:true})).toBeVisible();await expect(page.getByRole("cell",{name:"Plan respetado",exact:true})).toBeVisible();
-  await page.reload();await expect(page.getByRole("cell",{name:/EUR\/USDPlan E2E/})).toBeVisible();await page.getByRole("button",{name:"Editar",exact:true}).click();await page.getByLabel("Notas y aprendizaje").fill("Pérdida siguiendo el plan");await page.getByRole("button",{name:"Guardar operación",exact:true}).click();await expect(page.getByText("Entrada guardada en tu diario.",{exact:true})).toBeVisible();
+  await page.reload();await expect(page.getByRole("cell",{name:/EUR\/USD\s*Plan E2E/})).toBeVisible();await page.getByRole("button",{name:"Editar",exact:true}).click();await page.getByLabel("Notas y aprendizaje").fill("Pérdida siguiendo el plan");await page.getByRole("button",{name:"Guardar operación",exact:true}).click();await expect(page.getByText("Entrada guardada en tu diario.",{exact:true})).toBeVisible();
 });
 
 test("glosario y mentor recuperan conceptos reales del currículo",async({page})=>{

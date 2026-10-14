@@ -73,7 +73,7 @@ describe("almacenamiento local versionado", () => {
     expect(await getPreferences(database)).toEqual({ theme: "dark" });
   });
 
-  it("migra v1 a v2 sin perder perfil, preferencias, progreso, intentos o datos reservados", async () => {
+  it("migra v1 a v3 sin perder perfil, preferencias, progreso, intentos o datos reservados", async () => {
     database.close();
     const old = new Dexie(database.name);
     old.version(1).stores(SCHEMA_V1);
@@ -90,7 +90,7 @@ describe("almacenamiento local versionado", () => {
     old.close();
     await database.open();
     await initializeDatabase(database);
-    expect(database.verno).toBe(2);
+    expect(database.verno).toBe(3);
     expect(await database.profile.get("local-student")).toMatchObject({ name: "Datos anteriores", weeklyGoal: 5 });
     expect(await getPreferences(database)).toEqual({ theme: "light" });
     expect(await database.attempts.get("old-attempt")).toEqual(attempt);

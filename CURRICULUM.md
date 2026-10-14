@@ -1,77 +1,220 @@
-# Currículo de Forex Academy Pro
+# Programa de estudio
 
-## Estado de la primera fase
+La academia contiene 104 lecciones, 449 preguntas propias de lección, 13 exámenes y 104 ejemplos prácticos resueltos. Las 208 preguntas de examen seleccionan dos cuestiones de cada lección; no se cuentan como preguntas originales adicionales.
 
-Hay **una unidad publicada, cinco preguntas corregibles y un escenario numérico simulado**. El catálogo contiene trece niveles (0–12) como estructura de ampliación. Que el nivel 0 tenga contenido disponible no significa que esté completo. Los demás niveles están señalados como pendientes.
+## Cómo avanzar
 
-Los objetivos de cobertura son al menos 100 lecciones, 300 ejercicios, 50 escenarios, exámenes por nivel y un glosario extenso. Son objetivos del proyecto; no describen contenido ya publicado.
+El nivel 0 está abierto desde el inicio. Puedes estudiar sus ocho lecciones en cualquier orden. Cada unidad exige al menos un 80 % de aciertos, todas sus preguntas obligatorias correctas y confirmación de lectura/revisión. Completar las ocho abre el examen de nivel; aprobarlo y confirmar la revisión desbloquea el siguiente. Repetir una evaluación no elimina una competencia ya superada.
 
-## Unidad disponible
+El porcentaje global de lecciones usa las 104 unidades como denominador; los 13 exámenes se contabilizan en los niveles completados. El progreso anterior de la primera lección se conserva. Los bloqueos orientan el aprendizaje en este navegador, sin certificación protegida ni autenticación.
 
-**Dinero, precios y poder adquisitivo** — nivel 0, unos 20 minutos de estudio orientativos. Ruta: `/academia/dinero-y-poder-adquisitivo`.
+Cada lección incluye objetivos, requisitos, explicación, modelo técnico y límites, ejemplo simulado, diagrama, errores frecuentes, resumen, conceptos relacionados, fuentes y evaluación con explicaciones. Los ejemplos no son operaciones ni rendimientos históricos.
 
-La unidad enseña a reconocer las funciones del dinero, separar importes nominales de capacidad de compra, interpretar una cesta y calcular valores reales. Incluye siete secciones: intercambios, saldo y capacidad de compra, cesta e inflación, fórmula técnica, interpretación visual, ejemplo institucional del euro y límites del modelo.
+## Niveles y lecciones publicadas
 
-Su ejemplo resuelto conserva 1.000 € nominales cuando una cesta se encarece un 5 %. El cálculo es `1.000 / 1,05 = 952,380952…`, es decir, 952,38 € con poder de compra inicial. La pérdida relativa es aproximadamente un 4,76 %, no un 5 % exacto. Para mantener la compra inicial se necesitarían 1.050 € nominales finales: una pregunta diferente. El 5 % es un supuesto didáctico, no una tasa de inflación observada.
+### Nivel 0 · Fundamentos financieros
 
-### Estructura educativa
+Entiende el dinero, los mercados, los tipos de interés y la relación entre riesgo y rentabilidad.
 
-| Requisito de la lección | Implementación |
-| --- | --- |
-| Título | Nombre y subtítulo que identifican la competencia |
-| Objetivos | Cinco capacidades concretas |
-| Conocimientos previos | Operaciones básicas, porcentajes y calculadora opcional |
-| Explicación sencilla | Cestas que pueden comprarse con un saldo constante |
-| Explicación técnica | Factor de precios, valor real y comprobación de unidades |
-| Ejemplo real verificable | Efectivo y depósitos en euros; referencias del BCE |
-| Diagrama y gráfico | Comparación visual del poder de compra inicial y final; interpretación en sección 05 |
-| Ejemplo numérico | Escenario resuelto, cálculos auxiliares y supuestos explícitos |
-| Errores frecuentes | Cinco errores con explicación y corrección |
-| Ejercicio interactivo | Cálculo numérico obligatorio |
-| Quiz | Tres preguntas de elección y una de verdadero o falso |
-| Resumen | Cinco ideas principales |
-| Conceptos relacionados | Diez conceptos para conectar aprendizajes |
-| Recursos adicionales | Tres recursos oficiales del BCE en español |
-| Criterios de superación | Al menos cuatro aciertos y cálculo obligatorio correcto |
+- **Dinero, precios y poder adquisitivo** · 5 preguntas · 20 min estimados. Ruta: `/academia/dinero-y-poder-adquisitivo/`.
+- **El sistema financiero y sus balances** · 4 preguntas · 18 min estimados. Ruta: `/academia/sistema-financiero-y-balances/`.
+- **Mercados, oferta y demanda** · 4 preguntas · 18 min estimados. Ruta: `/academia/mercados-oferta-y-demanda/`.
+- **Bancos centrales y transmisión monetaria** · 4 preguntas · 18 min estimados. Ruta: `/academia/bancos-centrales-y-transmision/`.
+- **Interés, tiempo y capitalización** · 4 preguntas · 18 min estimados. Ruta: `/academia/interes-tiempo-y-capitalizacion/`.
+- **Liquidez y coste de ejecución** · 4 preguntas · 18 min estimados. Ruta: `/academia/liquidez-y-coste-de-ejecucion/`.
+- **Volatilidad, riesgo y rentabilidad** · 4 preguntas · 18 min estimados. Ruta: `/academia/volatilidad-riesgo-y-rentabilidad/`.
+- **Invertir, especular y apostar** · 4 preguntas · 18 min estimados. Ruta: `/academia/invertir-especular-y-apostar/`.
 
-### Evaluación
+Examen: `/academia/examen-nivel-0/` · 16 preguntas acumulativas.
 
-Las cinco preguntas pesan lo mismo (20 puntos cada una). La lección se supera con al menos un 80 % **y** el cálculo numérico correcto. Un 80 % con el cálculo incorrecto no completa la lección. La tolerancia numérica es inclusiva: ±0,01 € respecto a 952,38 €; se admite el resultado sin redondear. La interfaz convierte la entrada del usuario en un número; el motor de evaluación exige un número finito y no convierte cadenas silenciosamente.
+### Nivel 1 · Introducción al Forex
 
-Cada respuesta recibe una explicación y la solución tras el envío. Las preguntas desconocidas, ausentes, valores no finitos y opciones no reconocidas se rechazan. La corrección se realiza en el navegador. Las soluciones se distribuyen como contenido estático y pueden inspeccionarse: la evaluación está orientada al autoaprendizaje. La persistencia local de intentos en IndexedDB permite repetir sin borrar el historial y conservar el logro ya alcanzado. Las horas orientativas y el tiempo de uso no conceden competencias por sí solos.
+Aprende a leer una cotización y a distinguir instrumentos, costes y exposición antes de simular una operación.
 
-No se implementan todavía variantes aleatorias, adaptación de dificultad, ejercicios de arrastre, identificación de patrones ni exámenes por nivel. Deben añadirse con contenido verificable y corrección probada.
+- **Qué es Forex y quién participa** · 4 preguntas · 18 min estimados. Ruta: `/academia/forex-y-participantes/`.
+- **Pares, divisa base y divisa cotizada** · 4 preguntas · 18 min estimados. Ruta: `/academia/pares-base-y-cotizada/`.
+- **Pips, pipettes y tamaño de contrato** · 4 preguntas · 18 min estimados. Ruta: `/academia/pips-pipettes-y-lotes/`.
+- **Bid, ask, spread y comisiones** · 4 preguntas · 18 min estimados. Ruta: `/academia/bid-ask-spread-y-comisiones/`.
+- **Swap y financiación overnight** · 4 preguntas · 18 min estimados. Ruta: `/academia/swap-y-financiacion-overnight/`.
+- **Margen, apalancamiento, balance y equity** · 4 preguntas · 18 min estimados. Ruta: `/academia/margen-apalancamiento-y-equity/`.
+- **Órdenes market, limit, stop y salidas** · 4 preguntas · 18 min estimados. Ruta: `/academia/ordenes-market-limit-stop/`.
+- **Sesiones, Forex spot, CFDs y futuros** · 4 preguntas · 18 min estimados. Ruta: `/academia/sesiones-spot-cfd-y-futuros/`.
 
-## Itinerario previsto
+Examen: `/academia/examen-nivel-1/` · 16 preguntas acumulativas.
 
-| Nivel | Área | Resultado educativo previsto | Estado |
-| --- | --- | --- | --- |
-| 0 | Fundamentos financieros | Distinguir dinero, mercados, precios, liquidez, riesgo e inversión | Primera unidad disponible; resto pendiente |
-| 1 | Introducción al Forex | Interpretar pares, pips, lotes, costes, órdenes e instrumentos | Pendiente |
-| 2 | Gráficos y análisis técnico básico | Describir velas, tendencias, rangos y estructura sin información futura | Pendiente |
-| 3 | Análisis técnico intermedio | Calcular e interpretar indicadores y reconocer sus límites | Pendiente |
-| 4 | Price Action y estructura | Formular reglas observables y separar evidencia de convenciones visuales | Pendiente |
-| 5 | Análisis fundamental | Comparar publicaciones con expectativas y reconocer riesgo de eventos | Pendiente |
-| 6 | Gestión del riesgo | Calcular exposición, tamaño, R, expectancy, drawdown y límites | Pendiente; prioridad de desarrollo |
-| 7 | Psicología | Evaluar decisiones, sesgos, disciplina y respuesta emocional | Pendiente |
-| 8 | Estrategias | Definir hipótesis, reglas, invalidación, costes y condiciones de fallo | Pendiente |
-| 9 | Estadística | Evaluar incertidumbre, muestras, sesgos, robustez y costes | Pendiente |
-| 10 | Desarrollo de sistemas | Documentar reglas reproducibles y protocolos de suspensión | Pendiente |
-| 11 | Backtesting y forward testing | Validar datos, simular con costes y contrastar fuera de muestra | Pendiente |
-| 12 | Preparación profesional | Estudiar rutinas, costes, seguridad, registros y marco regulatorio | Pendiente |
+### Nivel 2 · Gráficos y análisis técnico básico
 
-El nivel 4 presentará Smart Money e ICT como marcos interpretativos que requieren validación, sin atribuirles capacidad predictiva demostrada. Las estrategias del nivel 8 necesitarán hipótesis, condiciones, entradas, salidas, invalidación, riesgo, ejemplo, fallos posibles, ejercicio y protocolo de evaluación sin mirar el futuro.
+Describe lo que muestra un gráfico sin confundir una observación con una predicción.
 
-El nivel 12 deberá comprobar las normas vigentes al publicar contenido dirigido a residentes en Bélgica y la UE, consultar FSMA y ESMA y distinguir spot, CFDs y otros derivados. En esta fase no se publican afirmaciones legales sobre operativa ni fiscalidad.
+- **Gráficos de líneas, barras y velas** · 4 preguntas · 18 min estimados. Ruta: `/academia/graficos-lineas-barras-y-velas/`.
+- **Anatomía de una vela japonesa** · 4 preguntas · 18 min estimados. Ruta: `/academia/anatomia-de-una-vela/`.
+- **Temporalidades y agregación de datos** · 4 preguntas · 18 min estimados. Ruta: `/academia/temporalidades-y-agregacion/`.
+- **Tendencias, máximos y mínimos** · 4 preguntas · 18 min estimados. Ruta: `/academia/tendencias-maximos-y-minimos/`.
+- **Rangos y consolidaciones** · 4 preguntas · 18 min estimados. Ruta: `/academia/rangos-y-consolidaciones/`.
+- **Soportes, resistencias y zonas** · 4 preguntas · 18 min estimados. Ruta: `/academia/soportes-resistencias-y-zonas/`.
+- **Rupturas, falsas rupturas y retrocesos** · 4 preguntas · 18 min estimados. Ruta: `/academia/rupturas-falsas-y-retrocesos/`.
+- **Volumen OTC y análisis multitemporal** · 4 preguntas · 18 min estimados. Ruta: `/academia/volumen-otc-y-multitemporalidad/`.
 
-## Fuentes y política editorial
+Examen: `/academia/examen-nivel-2/` · 16 preguntas acumulativas.
 
-Consultadas el 11 de octubre de 2026:
+### Nivel 3 · Análisis técnico intermedio
 
-- [BCE: ¿Qué es el dinero?](https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_money.es.html), para funciones y formas del dinero.
-- [BCE: ¿Qué es la inflación?](https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_inflation.es.html), para cestas y medición de precios.
-- [BCE: ¿Por qué es importante la estabilidad de precios?](https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/stableprices.es.html), para el contexto institucional y los efectos de inflación y deflación.
+Interpreta indicadores como transformaciones de datos y reconoce sus límites y señales falsas.
 
-El texto y los escenarios numéricos son originales. No se reutiliza una serie de mercado ni se presentan cifras simuladas como observaciones históricas. Las fuentes permiten ampliar y contrastar conceptos; las fórmulas se verifican mediante aritmética y pruebas automatizadas. Las duraciones son estimaciones de estudio, no registros de tiempo realizado.
+- **Medias móviles SMA y EMA** · 4 preguntas · 18 min estimados. Ruta: `/academia/medias-moviles-sma-y-ema/`.
+- **RSI y fuerza relativa de los cambios** · 4 preguntas · 18 min estimados. Ruta: `/academia/rsi-y-fuerza-relativa/`.
+- **MACD, momentum y divergencias** · 4 preguntas · 18 min estimados. Ruta: `/academia/macd-momentum-y-divergencias/`.
+- **ATR y medición de volatilidad** · 4 preguntas · 18 min estimados. Ruta: `/academia/atr-y-medicion-de-volatilidad/`.
+- **Bandas de Bollinger y dispersión** · 4 preguntas · 18 min estimados. Ruta: `/academia/bandas-de-bollinger/`.
+- **ADX, DMI y canales de precio** · 4 preguntas · 18 min estimados. Ruta: `/academia/adx-dmi-y-canales/`.
+- **Fibonacci, patrones y confluencias** · 4 preguntas · 18 min estimados. Ruta: `/academia/fibonacci-patrones-y-confluencias/`.
+- **Indicadores, señales falsas y sobreajuste** · 4 preguntas · 18 min estimados. Ruta: `/academia/indicadores-senales-falsas-y-sobreajuste/`.
 
-Para publicar una nueva unidad se exigirá: competencia observable, los quince elementos educativos, supuestos y unidades explícitos, ejercicios realmente corregibles, fuentes trazables para hechos verificables, límites del método y pruebas relevantes del cálculo. Una pantalla o un título de catálogo no equivalen a una lección publicada.
+Examen: `/academia/examen-nivel-3/` · 16 preguntas acumulativas.
+
+### Nivel 4 · Price Action y estructura
+
+Formula reglas observables para estudiar estructuras y contrasta marcos interpretativos con evidencia.
+
+- **Estructura interna y externa** · 4 preguntas · 18 min estimados. Ruta: `/academia/estructura-interna-y-externa/`.
+- **BOS, MSS y cambios de tendencia** · 4 preguntas · 18 min estimados. Ruta: `/academia/bos-mss-y-cambios-de-tendencia/`.
+- **Zonas de oferta y demanda frente a órdenes observadas** · 4 preguntas · 18 min estimados. Ruta: `/academia/zonas-oferta-demanda-y-ordenes/`.
+- **Liquidez, barridos y agrupaciones de stops** · 4 preguntas · 18 min estimados. Ruta: `/academia/liquidez-barridos-y-stops/`.
+- **Desequilibrios y Fair Value Gaps** · 4 preguntas · 18 min estimados. Ruta: `/academia/desequilibrios-y-fair-value-gaps/`.
+- **Order Blocks como hipótesis visual** · 4 preguntas · 18 min estimados. Ruta: `/academia/order-blocks-como-hipotesis/`.
+- **Smart Money, ICT y niveles de evidencia** · 4 preguntas · 18 min estimados. Ruta: `/academia/smart-money-ict-y-evidencia/`.
+- **Comparación crítica de metodologías** · 4 preguntas · 18 min estimados. Ruta: `/academia/comparacion-critica-de-metodologias/`.
+
+Examen: `/academia/examen-nivel-4/` · 16 preguntas acumulativas.
+
+### Nivel 5 · Análisis fundamental
+
+Relaciona publicaciones económicas, expectativas y política monetaria sin convertirlas en señales ciertas.
+
+- **Cuatro bancos centrales, decisiones distintas** · 5 preguntas · 18 min estimados. Ruta: `/academia/mandatos-bancos-centrales/`.
+- **Expectativas, sorpresas y ruedas de prensa** · 5 preguntas · 18 min estimados. Ruta: `/academia/expectativas-sorpresas-comunicacion/`.
+- **Inflación: leer el índice antes del titular** · 5 preguntas · 18 min estimados. Ruta: `/academia/inflacion-cpi-medicion/`.
+- **PIB, crecimiento y revisiones** · 5 preguntas · 18 min estimados. Ruta: `/academia/pib-crecimiento-revisiones/`.
+- **Empleo, NFP y tasa de paro** · 5 preguntas · 18 min estimados. Ruta: `/academia/empleo-nfp-desempleo/`.
+- **PMI y encuestas de actividad** · 5 preguntas · 18 min estimados. Ruta: `/academia/pmi-encuestas-difusion/`.
+- **Diferenciales de tipos, bonos y carry** · 5 preguntas · 18 min estimados. Ruta: `/academia/diferenciales-bonos-carry/`.
+- **Calendario, geopolítica y escenarios de riesgo** · 5 preguntas · 18 min estimados. Ruta: `/academia/calendario-escenarios-riesgo-eventos/`.
+
+Examen: `/academia/examen-nivel-5/` · 16 preguntas acumulativas.
+
+### Nivel 6 · Gestión del riesgo
+
+Prioridad formativa: calcula exposición, dimensiona pérdidas posibles y define cuándo dejar de operar.
+
+- **Presupuesto de pérdida y tamaño de posición** · 5 preguntas · 18 min estimados. Ruta: `/academia/presupuesto-riesgo-tamano/`.
+- **Valor del pip y moneda de la cuenta** · 5 preguntas · 18 min estimados. Ruta: `/academia/valor-pip-conversion-cuenta/`.
+- **Stop-loss, beneficio potencial y resultados en R** · 5 preguntas · 18 min estimados. Ruta: `/academia/stop-r-multiplo-deslizamiento/`.
+- **Aciertos, expectativa y profit factor** · 5 preguntas · 18 min estimados. Ruta: `/academia/expectativa-aciertos-profit-factor/`.
+- **Drawdown, recuperación y riesgo de ruina** · 5 preguntas · 18 min estimados. Ruta: `/academia/drawdown-rachas-ruina/`.
+- **Correlación y exposición agregada** · 5 preguntas · 18 min estimados. Ruta: `/academia/correlacion-exposicion-agregada/`.
+- **Apalancamiento, margen y eventos extremos** · 5 preguntas · 18 min estimados. Ruta: `/academia/apalancamiento-margen-eventos-extremos/`.
+- **Un plan de capital y criterios para no operar** · 5 preguntas · 18 min estimados. Ruta: `/academia/limites-capital-cuando-no-operar/`.
+
+Examen: `/academia/examen-nivel-6/` · 16 preguntas acumulativas.
+
+### Nivel 7 · Psicología del trading
+
+Evalúa decisiones por sus reglas y su contexto, separando la calidad del proceso del resultado aislado.
+
+- **Buen proceso, resultado incierto** · 5 preguntas · 18 min estimados. Ruta: `/academia/proceso-resultado-azar/`.
+- **FOMO y miedo a quedarse fuera** · 5 preguntas · 18 min estimados. Ruta: `/academia/fomo-miedo-quedarse-fuera/`.
+- **Revenge trading y sobreoperación** · 5 preguntas · 18 min estimados. Ruta: `/academia/revenge-sobreoperacion-pausas/`.
+- **Sesgos, confirmación y exceso de confianza** · 5 preguntas · 18 min estimados. Ruta: `/academia/sesgos-confirmacion-exceso-confianza/`.
+- **Aversión a la pérdida y efecto disposición** · 5 preguntas · 18 min estimados. Ruta: `/academia/aversion-perdida-efecto-disposicion/`.
+- **Disciplina y expectativas realistas** · 5 preguntas · 18 min estimados. Ruta: `/academia/disciplina-expectativas-realistas/`.
+- **Estrés, hábitos y paciencia operativa** · 5 preguntas · 18 min estimados. Ruta: `/academia/estres-habitos-paciencia/`.
+- **Diario emocional y revisión de decisiones** · 5 preguntas · 18 min estimados. Ruta: `/academia/diario-emocional-revision/`.
+
+Examen: `/academia/examen-nivel-7/` · 16 preguntas acumulativas.
+
+### Nivel 8 · Estrategias de trading
+
+Convierte ideas en hipótesis evaluables con condiciones, reglas, invalidación y costes explícitos.
+
+- **Seguimiento de tendencia y cruce de medias** · 5 preguntas · 24 min estimados. Ruta: `/academia/estrategia-tendencia-medias/`.
+- **Rupturas de un canal previo** · 5 preguntas · 24 min estimados. Ruta: `/academia/estrategia-ruptura-canal/`.
+- **Operar un rango con rechazo definido** · 5 preguntas · 24 min estimados. Ruta: `/academia/estrategia-rango-rechazo/`.
+- **Reversión a la media con distancia normalizada** · 5 preguntas · 24 min estimados. Ruta: `/academia/estrategia-reversion-media/`.
+- **Momentum en una estrategia swing** · 5 preguntas · 24 min estimados. Ruta: `/academia/estrategia-momentum-swing/`.
+- **Intradía y scalping: dos protocolos y sus costes** · 5 preguntas · 26 min estimados. Ruta: `/academia/estrategias-intradia-scalping/`.
+- **Un protocolo posterior a eventos macroeconómicos** · 5 preguntas · 26 min estimados. Ruta: `/academia/estrategia-eventos-macroeconomicos/`.
+- **Volatilidad y análisis multitemporal** · 5 preguntas · 26 min estimados. Ruta: `/academia/estrategia-volatilidad-multitemporal/`.
+
+Examen: `/academia/examen-nivel-8/` · 16 preguntas acumulativas.
+
+### Nivel 9 · Estadística y trading cuantitativo
+
+Mide incertidumbre y robustez para evitar confundir azar, selección de muestras y ventaja estadística.
+
+- **Probabilidad, esperanza y resultados en R** · 4 preguntas · 18 min estimados. Ruta: `/academia/probabilidad-esperanza-y-resultados/`.
+- **Dispersión, colas y dependencia** · 4 preguntas · 18 min estimados. Ruta: `/academia/dispersion-colas-y-dependencia/`.
+- **Tamaño de muestra e intervalos de confianza** · 4 preguntas · 18 min estimados. Ruta: `/academia/muestras-e-intervalos-de-confianza/`.
+- **Monte Carlo, secuencias y riesgo de ruina** · 4 preguntas · 18 min estimados. Ruta: `/academia/monte-carlo-y-riesgo-de-ruina/`.
+- **Sesgos, data snooping y sobreajuste** · 4 preguntas · 18 min estimados. Ruta: `/academia/sesgos-y-busqueda-de-estrategias/`.
+- **Fuera de muestra y walk-forward** · 4 preguntas · 18 min estimados. Ruta: `/academia/fuera-de-muestra-y-walk-forward/`.
+- **Sharpe, Sortino y maximum drawdown** · 4 preguntas · 18 min estimados. Ruta: `/academia/sharpe-sortino-y-drawdown/`.
+- **Robustez, parámetros y sensibilidad a costes** · 4 preguntas · 18 min estimados. Ruta: `/academia/robustez-parametros-y-costes/`.
+
+Examen: `/academia/examen-nivel-9/` · 16 preguntas acumulativas.
+
+### Nivel 10 · Desarrollo de un sistema
+
+Documenta un plan suficientemente preciso como para que otra persona pueda aplicarlo y evaluarlo.
+
+- **De una hipótesis a una especificación** · 4 preguntas · 18 min estimados. Ruta: `/academia/hipotesis-y-especificacion-del-sistema/`.
+- **Seleccionar mercados, pares y horarios** · 4 preguntas · 18 min estimados. Ruta: `/academia/mercados-pares-temporalidades-y-horarios/`.
+- **Entradas, salidas e invalidación objetiva** · 4 preguntas · 18 min estimados. Ruta: `/academia/entradas-salidas-e-invalidacion/`.
+- **Presupuesto de riesgo y exposición conjunta** · 4 preguntas · 18 min estimados. Ruta: `/academia/presupuesto-de-riesgo-del-sistema/`.
+- **Filtros de noticias y condiciones de abstención** · 4 preguntas · 18 min estimados. Ruta: `/academia/filtros-noticias-y-condiciones-de-abstencion/`.
+- **Checklist y procedimientos diarios** · 4 preguntas · 18 min estimados. Ruta: `/academia/checklist-y-procedimientos-diarios/`.
+- **Versiones, diario y revisión del sistema** · 4 preguntas · 18 min estimados. Ruta: `/academia/versiones-diario-y-revision-del-sistema/`.
+- **Suspensión, reanudación y plan final** · 4 preguntas · 18 min estimados. Ruta: `/academia/suspension-reanudacion-y-plan-final/`.
+
+Examen: `/academia/examen-nivel-10/` · 16 preguntas acumulativas.
+
+### Nivel 11 · Backtesting y forward testing
+
+Evalúa estrategias con datos trazables y supuestos reproducibles antes de interpretar sus resultados.
+
+- **Datos históricos: fuentes, licencias y calidad** · 4 preguntas · 18 min estimados. Ruta: `/academia/datos-historicos-fuentes-y-calidad/`.
+- **Causalidad, indicadores y look-ahead** · 4 preguntas · 18 min estimados. Ruta: `/academia/causalidad-indicadores-y-look-ahead/`.
+- **Ejecución, costes y ambigüedad OHLC** · 4 preguntas · 18 min estimados. Ruta: `/academia/ejecucion-costes-y-ambiguedad-ohlc/`.
+- **Motor determinista y libro de operaciones** · 4 preguntas · 18 min estimados. Ruta: `/academia/motor-determinista-y-libro-de-operaciones/`.
+- **Muestras, benchmarks y comparaciones justas** · 4 preguntas · 18 min estimados. Ruta: `/academia/muestras-benchmarks-y-comparacion/`.
+- **Interpretar resultados sin ocultar concentración** · 4 preguntas · 18 min estimados. Ruta: `/academia/interpretar-resultados-del-backtest/`.
+- **Forward testing en simulación** · 4 preguntas · 18 min estimados. Ruta: `/academia/forward-testing-en-simulacion/`.
+- **Consistencia, descarte y expediente de evidencia** · 4 preguntas · 18 min estimados. Ruta: `/academia/consistencia-descarte-y-expediente-de-evidencia/`.
+
+Examen: `/academia/examen-nivel-11/` · 16 preguntas acumulativas.
+
+### Nivel 12 · Preparación profesional
+
+Prepara rutinas, registros y criterios de seguridad, con referencias oficiales para Bélgica y la Unión Europea.
+
+- **Rutina profesional y calidad de decisión** · 4 preguntas · 18 min estimados. Ruta: `/academia/rutina-profesional-y-calidad-de-decision/`.
+- **Plan de actividad, costes y reservas** · 4 preguntas · 18 min estimados. Ruta: `/academia/plan-de-negocio-costes-y-reservas/`.
+- **Cuentas demo y límites de la práctica** · 4 preguntas · 18 min estimados. Ruta: `/academia/cuentas-demo-y-limites-de-la-practica/`.
+- **Cuentas fondeadas y reglas de prop firms** · 4 preguntas · 18 min estimados. Ruta: `/academia/cuentas-fondeadas-y-reglas-de-prop-firms/`.
+- **Bélgica y UE: regulación e instrumentos** · 4 preguntas · 18 min estimados. Ruta: `/academia/regulacion-belgica-ue-e-instrumentos/`.
+- **Verificar proveedores y prevenir fraudes** · 4 preguntas · 18 min estimados. Ruta: `/academia/verificar-proveedores-y-prevenir-fraudes/`.
+- **Fiscalidad introductoria y mantenimiento de registros** · 4 preguntas · 18 min estimados. Ruta: `/academia/fiscalidad-introductoria-y-registros/`.
+- **Seguridad, copias y evaluación de competencia** · 4 preguntas · 18 min estimados. Ruta: `/academia/seguridad-copias-y-evaluacion-profesional/`.
+
+Examen: `/academia/examen-nivel-12/` · 16 preguntas acumulativas.
+
+## Criterios de contenido
+
+La teoría de cada unidad supera 350 palabras; el recuento excluye objetivos, ejemplos y preguntas. El volumen es un control de cobertura y no sustituye la revisión pedagógica. Se distinguen convenios visuales y reglas verificables de evidencia de rentabilidad. La regulación se trata con fuentes oficiales, alcance por instrumento y fechas de consulta; no se ofrece asesoramiento fiscal individual.
+
+## Recursos de apoyo
+
+- Glosario con 90 términos y enlaces a sus niveles.
+- Biblioteca de fuentes citadas y enlaces a calendarios oficiales.
+- Repaso mediante conceptos fallados y sus lecciones.
+- Práctica de cálculos con variantes reproducibles y dificultad según respuestas anteriores.
+- Calculadoras, simulación, replay, backtesting y diario para aplicar los conceptos.

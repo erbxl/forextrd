@@ -1,4 +1,5 @@
 import type { AssessmentResult } from "@/modules/academy/types";
+import type { PracticeDifficulty, PracticeFamily } from "@/modules/exercises/practice";
 
 export type Theme = "dark" | "light";
 export type LocalProfile = {
@@ -16,6 +17,17 @@ export type StoredAttempt = AssessmentResult & {
   answers: Record<string, string | number>;
   createdAt: string;
 };
+export type StoredPracticeAttempt = {
+  id: string;
+  family: PracticeFamily;
+  sequence: number;
+  seed: number;
+  generatorVersion: 1;
+  difficulty: PracticeDifficulty;
+  response: number;
+  correct: boolean;
+  createdAt: string;
+};
 export type StudySession = { id: string; startedAt: string; lastHeartbeatAt: string };
 export type DailyActivity = { date: string; studySeconds: number; attempts: number; completions: number };
 export type ReviewConcept = { concept: string; incorrectCount: number; lastAttemptAt: string };
@@ -29,6 +41,7 @@ export type PersonalTables = {
   preferences: Preferences[];
   lessonProgress: StoredLessonProgress[];
   attempts: StoredAttempt[];
+  practiceAttempts: StoredPracticeAttempt[];
   studySessions: StudySession[];
   dailyActivity: DailyActivity[];
   reviewConcepts: ReviewConcept[];
@@ -39,7 +52,7 @@ export type PersonalTables = {
 };
 
 export const TABLE_NAMES = [
-  "profile", "preferences", "lessonProgress", "attempts", "studySessions", "dailyActivity",
+  "profile", "preferences", "lessonProgress", "attempts", "practiceAttempts", "studySessions", "dailyActivity",
   "reviewConcepts", "demoTrades", "replaySessions", "backtestResults", "journalEntries",
 ] as const satisfies readonly (keyof PersonalTables)[];
 

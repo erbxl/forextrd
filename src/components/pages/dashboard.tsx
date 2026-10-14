@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, Check, CheckCircle2, ChevronRight, Clock3, Compass, Flag, Flame, GraduationCap, Layers3, LockKeyhole, ShieldCheck, Target } from "lucide-react";
+import { PracticeSummary } from "@/components/practice-summary";
 import { Button } from "@/components/ui/button";
 import { PurchasingPowerChart } from "@/components/purchasing-power-chart";
 import { StorageStatus, useLearning } from "@/components/learning-provider";
@@ -36,6 +37,7 @@ export default function Dashboard() {
       <Link href="/progreso" className="review-card"><span className="review-icon"><Compass size={22}/></span><div><span className="eyebrow">APRENDE DE TUS RESPUESTAS</span><h3>{progress.weaknesses.length ? "Tienes conceptos por repasar" : "Tu progreso tiene dirección"}</h3><p>{progress.weaknesses.length ? `${progress.weaknesses.length} conceptos detectados en tus intentos.` : "Descubre qué dominas y qué necesitas reforzar."}</p></div><ArrowUpRight size={18}/></Link></div>
     </div>
     <section className="next-steps"><div className="section-title"><h2>Un buen comienzo</h2><span>LO ESENCIAL, ANTES DE OPERAR</span></div><div className="next-step-grid"><Link href={`/academia/${next.slug}`} className="step-card"><span className="step-card-icon"><BookOpen size={21}/></span><div><span className="small muted">01 / COMPRENDER</span><h3>{next.kind === "exam" ? "Comprueba lo aprendido" : "Tu siguiente lección"}</h3><p>{next.title}</p></div><ArrowUpRight size={17}/></Link><Link href="/recursos" className="step-card"><span className="step-card-icon blue"><ShieldCheck size={21}/></span><div><span className="small muted">02 / CONTRASTAR</span><h3>Aprende de las fuentes</h3><p>Recursos oficiales, explicaciones verificables.</p></div><ArrowUpRight size={17}/></Link><Link href="/ajustes" className="step-card"><span className="step-card-icon amber"><Flag size={21}/></span><div><span className="small muted">03 / CONSTRUIR UN HÁBITO</span><h3>Define tu propio ritmo</h3><p>Un plan de estudio que encaje contigo.</p></div><ArrowUpRight size={17}/></Link></div></section>
+    <PracticeSummary/>
     <div className="phase-notice"><span className="tag">TU RECORRIDO</span><p><strong>{stats.publishedLessons} lecciones y 13 exámenes.</strong> Has completado {stats.completedModules} de 13 niveles. El progreso de lecciones se calcula sobre todo el programa.</p><Link href="/academia" aria-label="Explorar el plan de estudios"><ArrowDownRight size={20}/></Link></div>
   </div>;
 }

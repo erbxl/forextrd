@@ -16,10 +16,11 @@ const navigation: {group:string;items:NavigationItem[]}[] = [
     { href: "/progreso", label: "Mi progreso", icon: ChartNoAxesCombined },
   ] },
   { group: "PRACTICA", items: [
+    { href: "/practica", label: "Ejercicios", icon: Target },
     { href: "/herramientas", label: "Calculadoras", icon: Wrench },
-    { href: "/simulador", label: "Simulador", icon: CandlesIcon, pending: true },
-    { href: "/replay", label: "Trading Replay", icon: Play, pending: true },
-    { href: "/backtesting", label: "Backtesting", icon: FlaskConical, pending: true },
+    { href: "/simulador", label: "Simulador", icon: CandlesIcon },
+    { href: "/replay", label: "Trading Replay", icon: Play },
+    { href: "/backtesting", label: "Backtesting", icon: FlaskConical },
     { href: "/diario", label: "Diario de trading", icon: NotebookPen },
   ] },
   { group: "EXPLORA", items: [

@@ -17,7 +17,7 @@ Dirección de desarrollo: `http://127.0.0.1:3000/forextrd/`. No hay configuraci�
 | --- | --- |
 | `npm run dev` | Desarrollo Next.js local bajo `/forextrd/`. |
 | `npm run typecheck` | Comprobar TypeScript. |
-| `npm test` | Evaluación, almacenamiento local y backups mediante Vitest. |
+| `npm test` | Currículo, ejecución, cálculos, práctica, almacenamiento y backups mediante Vitest. |
 | `npm run test:watch` | Vitest durante desarrollo. |
 | `npm run build` | Exportar a `out/` y verificar el artefacto. |
 | `npm run preview` / `npm start` | Servir archivos de `out/` en `127.0.0.1:3100/forextrd/`. |
@@ -64,7 +64,7 @@ No se necesita un token personal en el código. Los permisos de escritura se con
 
 Mantén los apartados definidos en [CURRICULUM.md](CURRICULUM.md), fuentes verificables y ejemplos etiquetados. Cada modalidad publicada necesita casos de referencia, corrección explicada, guardado y repetición. Una nueva ruta de lección debe figurar en los parámetros estáticos y generar su HTML.
 
-Las herramientas futuras se implementarán progresivamente en el navegador. Para datos grandes, considera paginación, cuotas, importación por bloques y Web Workers. Las interfaces de proveedores externos deben hacer explícitas CORS, licencia y disponibilidad; no añadas datos inventados para cubrir una integración ausente.
+Las herramientas actuales se implementan en módulos TypeScript locales; sus supuestos se documentan en ARCHITECTURE.md. Para datos grandes, considera paginación, cuotas, importación por bloques y Web Workers. Las interfaces de proveedores externos deben hacer explícitas CORS, licencia y disponibilidad; no añadas datos inventados para cubrir una integración ausente.
 
 ## Diagnóstico
 

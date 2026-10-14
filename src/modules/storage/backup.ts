@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { firstLesson, getLesson } from "@/modules/academy/content";
 import { evaluateAnswers } from "@/modules/exercises/evaluate";
+import { generatePractice, gradePractice, nextPracticeDifficulty } from "@/modules/exercises/practice";
 import { canStudy } from "@/modules/academy/progression";
 import { AcademyDatabase, defaultPreferences, defaultProfile, getDatabase, initializeDatabase } from "./db";
 import { madridDate } from "./dates";
@@ -8,10 +9,11 @@ import { TABLE_NAMES, deriveReviewConcepts, type DailyActivity, type JsonValue, 
 
 export type BackupEnvelope = {
   format: "forex-academy-pro";
-  version: 1;
+  version: 2;
   exportedAt: string;
   tables: PersonalTables;
 };
+export type LegacyBackupEnvelope = Omit<BackupEnvelope, "version" | "tables"> & { version: 1; tables: Omit<PersonalTables, "practiceAttempts"> };
 
 export type BackupPreview = {
   profileName: string;
@@ -19,6 +21,7 @@ export type BackupPreview = {
   lessonsRead: number;
   lessonsCompleted: number;
   attempts: number;
+  practiceAttempts: number;
   studySeconds: number;
   theme: "dark" | "light";
   demoTrades: number;
@@ -50,14 +53,14 @@ function assertSafeJson(value: unknown): void {
   let nodes = 0;
   while (pending.length) {
     const current = pending.pop()!;
-    if (++nodes > 150_000 || current.depth > 20) throw new Error("La copia contiene demasiados datos o niveles anidados.");
+    if (++nodes > 1_000_000 || current.depth > 20) throw new Error("La copia contiene demasiados datos o niveles anidados.");
     if (current.value === null || typeof current.value === "boolean") continue;
     if (typeof current.value === "number") {
       if (!Number.isFinite(current.value)) throw new Error("La copia contiene un número no finito.");
       continue;
     }
     if (typeof current.value === "string") {
-      if (current.value.length > 20_000) throw new Error("La copia contiene un texto demasiado largo.");
+      if (current.value.length > 500_000) throw new Error("La copia contiene un texto demasiado largo.");
       continue;
     }
     if (typeof current.value !== "object") throw new Error("La copia debe contener únicamente valores JSON.");
@@ -109,6 +112,17 @@ const reservedSchema = z.object({
   updatedAt: isoDate,
   metadata: metadataSchema,
 }).strict().refine((record) => record.updatedAt >= record.createdAt, "Las fechas del registro están invertidas.");
+const practiceAttemptSchema = z.object({
+  id: identifier,
+  family: z.enum(["pips", "position", "expectancy"]),
+  sequence: z.number().int().min(1).max(100_000),
+  seed: z.number().int().min(0).max(0xffffffff),
+  generatorVersion: z.literal(1),
+  difficulty: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  response: z.number().finite(),
+  correct: z.boolean(),
+  createdAt: isoDate,
+}).strict();
 const tableSchemas = z.object({
   profile: z.array(z.object({
     id: z.literal("local-student"),
@@ -120,6 +134,7 @@ const tableSchemas = z.object({
   preferences: z.array(z.object({ id: z.literal("local"), theme: z.enum(["dark", "light"]), updatedAt: isoDate }).strict()).length(1),
   lessonProgress: z.array(z.object({ lessonSlug: identifier, readAt: isoDate.nullable(), completedAt: isoDate.nullable() }).strict()).min(1).max(MAX_ROWS),
   attempts: z.array(attemptSchema).max(MAX_ROWS),
+  practiceAttempts: z.array(practiceAttemptSchema).max(MAX_ROWS),
   studySessions: z.array(z.object({ id: identifier, startedAt: isoDate, lastHeartbeatAt: isoDate }).strict()
     .refine((session) => session.startedAt <= session.lastHeartbeatAt, "Las fechas de la sesión están invertidas.")).max(MAX_ROWS),
   dailyActivity: z.array(z.object({ date: calendarDate, studySeconds: z.number().int().min(0).max(86_400), attempts: integer, completions: integer }).strict()).max(MAX_ROWS),
@@ -131,17 +146,20 @@ const tableSchemas = z.object({
 }).strict();
 const envelopeSchema = z.object({
   format: z.literal("forex-academy-pro"),
-  version: z.literal(1),
+  version: z.literal(2),
   exportedAt: isoDate,
   tables: tableSchemas,
 }).strict();
+const legacyEnvelopeSchema = envelopeSchema.extend({ version: z.literal(1), tables: tableSchemas.omit({ practiceAttempts: true }) });
 
 function validateEnvelope(raw: unknown): BackupEnvelope {
   assertSafeJson(raw);
-  if (raw && typeof raw === "object" && "version" in raw && raw.version !== 1) {
+  if (raw && typeof raw === "object" && "version" in raw && raw.version !== 1 && raw.version !== 2) {
     throw new Error("La versión de esta copia no es compatible. No se ha modificado ningún dato.");
   }
-  const parsed = envelopeSchema.safeParse(raw);
+  const legacy = raw && typeof raw === "object" && "version" in raw && raw.version === 1 ? legacyEnvelopeSchema.safeParse(raw) : null;
+  const normalized = legacy?.success ? { ...legacy.data, version: 2, tables: { ...legacy.data.tables, practiceAttempts: [] } } : raw;
+  const parsed = envelopeSchema.safeParse(normalized);
   if (!parsed.success) throw new Error("La estructura de la copia no es válida. Comprueba sus campos y fechas.");
   const envelope: BackupEnvelope = parsed.data;
   const { tables } = envelope;
@@ -157,6 +175,15 @@ function validateEnvelope(raw: unknown): BackupEnvelope {
     if (new Set(keys).size !== keys.length) throw new Error(`La tabla ${table} contiene identificadores duplicados.`);
   }
   if (rowCount > 30_000) throw new Error("La copia contiene demasiados registros.");
+  const practiceKeys = tables.practiceAttempts.map(attempt => `${attempt.family}:${attempt.sequence}`);
+  if (new Set(practiceKeys).size !== practiceKeys.length) throw new Error("La práctica contiene secuencias duplicadas.");
+  const practiceHistory: PersonalTables["practiceAttempts"] = [];
+  tables.practiceAttempts = tables.practiceAttempts.slice().sort((a, b) => a.sequence - b.sequence).map(attempt => {
+    if (nextPracticeDifficulty(practiceHistory, attempt.family) !== attempt.difficulty) throw new Error("La dificultad de práctica no coincide con su historial.");
+    const corrected = { ...attempt, correct: gradePractice(generatePractice(attempt.family, attempt.seed, attempt.difficulty), attempt.response) };
+    practiceHistory.push(corrected);
+    return corrected;
+  });
   const progressSlugs = new Set(tables.lessonProgress.map((record) => record.lessonSlug));
   if (!progressSlugs.has(firstLesson.slug)) throw new Error("La copia no contiene el progreso de la unidad disponible.");
   for (const progress of tables.lessonProgress) {
@@ -221,7 +248,7 @@ export async function exportBackup(client = getDatabase()): Promise<BackupEnvelo
       Object.assign(tables, { [table]: await client.table(table).toArray() });
     }
   });
-  return snapshotBackup({ format: "forex-academy-pro", version: 1, exportedAt: new Date().toISOString(), tables });
+  return snapshotBackup({ format: "forex-academy-pro", version: 2, exportedAt: new Date().toISOString(), tables });
 }
 
 export function backupPreview(parsed: BackupEnvelope): BackupPreview {
@@ -232,6 +259,7 @@ export function backupPreview(parsed: BackupEnvelope): BackupPreview {
     lessonsRead: tables.lessonProgress.filter((progress) => progress.readAt).length,
     lessonsCompleted: tables.lessonProgress.filter((progress) => progress.completedAt).length,
     attempts: tables.attempts.length,
+    practiceAttempts: tables.practiceAttempts.length,
     studySeconds: tables.dailyActivity.reduce((total, day) => total + day.studySeconds, 0),
     theme: tables.preferences[0].theme,
     demoTrades: tables.demoTrades.length,
@@ -263,7 +291,7 @@ export async function resetDatabase(client = getDatabase()): Promise<void> {
     profile: [defaultProfile(now)],
     preferences: [defaultPreferences(now, "dark")],
     lessonProgress: [{ lessonSlug: firstLesson.slug, readAt: null, completedAt: null }],
-    attempts: [], studySessions: [], dailyActivity: [], reviewConcepts: [],
+    attempts: [], practiceAttempts: [], studySessions: [], dailyActivity: [], reviewConcepts: [],
     demoTrades: [], replaySessions: [], backtestResults: [], journalEntries: [],
   });
 }

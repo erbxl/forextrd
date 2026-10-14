@@ -2,7 +2,7 @@ import Dexie, { type Table } from "dexie";
 import { z } from "zod";
 import { firstLesson } from "@/modules/academy/content";
 import { deriveReviewConcepts, type DailyActivity, type LocalProfile, type Preferences, type ReservedRecord,
-  type ReviewConcept, type StoredAttempt, type StoredLessonProgress, type StudySession, type Theme } from "./types";
+  type ReviewConcept, type StoredAttempt, type StoredLessonProgress, type StoredPracticeAttempt, type StudySession, type Theme } from "./types";
 
 export const DATABASE_NAME = "forex-academy-pro";
 export const SCHEMA_V1 = {
@@ -23,6 +23,7 @@ export class AcademyDatabase extends Dexie {
   preferences!: Table<Preferences, string>;
   lessonProgress!: Table<StoredLessonProgress, string>;
   attempts!: Table<StoredAttempt, string>;
+  practiceAttempts!: Table<StoredPracticeAttempt, string>;
   studySessions!: Table<StudySession, string>;
   dailyActivity!: Table<DailyActivity, string>;
   reviewConcepts!: Table<ReviewConcept, string>;
@@ -41,6 +42,7 @@ export class AcademyDatabase extends Dexie {
       const concepts = deriveReviewConcepts(attempts);
       if (concepts.length) await transaction.table("reviewConcepts").bulkPut(concepts);
     });
+    this.version(3).stores({ practiceAttempts: "id, family, createdAt, &[family+sequence]" });
   }
 }
 
